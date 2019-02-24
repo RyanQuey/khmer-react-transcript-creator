@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import { TranscriptEditor } from './lib';
+import { TranscriptEditor, GenerateTranscript } from './lib';
 
 import kaldiTedTalkTranscript from './sample-data/KateDarling_2018S-bbc-kaldi.json';
 import style from './index.module.css';
@@ -142,6 +142,7 @@ class App extends React.Component {
             Github Repo
            </a>
          </span>
+         <GenerateTranscript />
          <br />
          <button onClick={ () => this.loadDemo() }>load demo</button>
          <hr />
