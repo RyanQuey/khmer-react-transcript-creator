@@ -39,7 +39,13 @@ class GenerateTranscript extends Component {
     this.props.resetTranscript()
   }
   render() {
-    const { transcript, browserSupportsSpeechRecognition, interimTranscript, listening, allResults } = this.props
+    const { 
+      transcript, 
+      browserSupportsSpeechRecognition, 
+      interimTranscript, 
+      listening, 
+      // allResults 
+    } = this.props
     // const {  } = this.state
     if (!browserSupportsSpeechRecognition) {
       // NOTE happens several times, as this gets rerendered for some reason. Returns false even when browser can support sometimes for some reason too, but eventually returns true
@@ -48,7 +54,8 @@ class GenerateTranscript extends Component {
     if (listening) {
       counter ++
     }
-    console.log(allResults)
+    //TODO add back in once we switch over to using my fork  which passes down all results as an array rather than compiling all into a string
+    //console.log(allResults)
 
     return (
       <div>
