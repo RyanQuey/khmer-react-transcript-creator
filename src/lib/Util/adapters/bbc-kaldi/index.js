@@ -129,7 +129,8 @@ const groupWordsInParagraphs = (words) => {
   let paragraph = { words: [], text: [] };
 
   words.forEach((word) => {
-    // if word contains punctuation
+    console.log("word", word)
+    // if word contains punctuation TODO add Khmer punctuation. Right now, will always return false
     if (/[.?!]/.test(word.punct)) {
       paragraph.words.push(word);
       paragraph.text.push(word.punct);
@@ -137,10 +138,13 @@ const groupWordsInParagraphs = (words) => {
       // reset paragraph
       paragraph = { words: [], text: [] };
     } else {
+
       paragraph.words.push(word);
       paragraph.text.push(word.punct);
     }
   });
+  // RQ added. If we don't add this though, I think it ends up skipping the last paragraph...or for Khmer, maybe the whole transcript!
+  results.push(paragraph);
 
   return results;
 };
@@ -157,8 +161,10 @@ const bbcKaldiToDraft = (bbcKaldiJson) => {
     tmpWords = bbcKaldiJson.words;
   }
 
+  console.log("tmpWords", tmpWords)
   const wordsByParagraphs = groupWordsInParagraphs(tmpWords);
 
+  console.log("wordsByParagraphs", wordsByParagraphs)
   wordsByParagraphs.forEach((paragraph, i) => {
     const draftJsContentBlockParagraph = {
       text: paragraph.text.join(' '),

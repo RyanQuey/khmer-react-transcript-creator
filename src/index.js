@@ -19,7 +19,7 @@ class App extends React.Component {
       isTextEditable: true,
       sttType: 'bbckaldi',
       analyticsEvents: [],
-      fileName: 'Kate Darling Ted Talk'
+      fileName: 'Khmer Transcript Data'
     };
 
     this.transcriptEditorRef = React.createRef();
@@ -149,37 +149,30 @@ class App extends React.Component {
          <br />
          <button onClick={ () => this.loadDemo() }>load demo</button>
          <hr />
-         <label>Load Local Media</label>
+         <label>Load Local Audio or Video Media:&nbsp;</label>
          <input
            type="file"
            onChange={ e => this.handleChangeLoadMedia(e.target.files) }
          />
-         or
+         or&nbsp;
          <button onClick={ () => this.handleChangeLoadMediaUrl() }>
           Load Media From Url
          </button>
          <br/>
-         <label>open Transcript Json</label>
+         <label>Transcript Json Format:&nbsp;</label>
          <SttTypeSelect
            name={ 'sttType' }
            value={ this.state.sttType }
            handleChange={ this.handleSttTypeChange }
          />
+         &nbsp;&nbsp;
+         <label>Transcript Json:&nbsp;</label>
          <input
            type="file"
            onChange={ e => this.handleChangeLoadTranscriptJson(e.target.files) }
          />
-
          <br />
-         <label>Export transcript</label>
-         <button onClick={ () => this.exportTranscript() }>Export file</button>
 
-         <ExportFormatSelect
-           name={ 'exportFormat' }
-           value={ this.state.exportFormat }
-           handleChange={ this.handleExportFormatChange }
-         />
-         <br />
          <label>Text Is Editable</label>
          <label className={ style.switch }>
            <input type="checkbox"
@@ -189,6 +182,7 @@ class App extends React.Component {
            <span className={ style.slider }></span>
          </label>
          <br />
+
          <label>Transcript Name</label>
          <input
            type="text"
@@ -196,6 +190,17 @@ class App extends React.Component {
            value={ this.state.fileName }
          />
          <br />
+
+         <label>Export Edited Transcript:&nbsp;</label>
+         <button onClick={ () => this.exportTranscript() }>Export</button>
+
+         <ExportFormatSelect
+           name={ 'exportFormat' }
+           value={ this.state.exportFormat }
+           handleChange={ this.handleExportFormatChange }
+         />
+         <br />
+
          <button onClick={ () => this.clearLocalStorage() }>Clear Local Storage</button>
          <hr/>
 
@@ -209,6 +214,7 @@ class App extends React.Component {
            ref = { this.transcriptEditorRef }
          />
          <hr/>
+
          <label>Components Analytics</label>
          <textarea
            style={ { height: '200px', width: '100%' } }

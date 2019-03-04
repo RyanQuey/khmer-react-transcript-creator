@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import getAudio from './getAudio'
+// import getAudio from './getAudio'
 import SpeechRecognition from '../react-speech-recognition/src/'
 let counter = 1
 
@@ -12,7 +12,6 @@ const propTypes = {
 }
 */
 
-
 class GenerateTranscript extends Component {
   constructor(props) {
     super(props);
@@ -23,18 +22,14 @@ class GenerateTranscript extends Component {
     this.start = this.start.bind(this)
     this.reset = this.reset.bind(this)
     this.generateJSON = this.generateJSON.bind(this)
-    this.captureSound = this.captureSound.bind(this)
 
-    // props.recognition.onresult 
+    // props.recognition.onresult
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
     props.recognition.lang = "km"
   }
 
   componentWillMount() {
-  }
-
-  captureSound() {
   }
 
   stop(e) {
@@ -46,7 +41,6 @@ class GenerateTranscript extends Component {
     this.props.startListening()
   }
   generateJSON(e) {
-    console.log(e)
     let transcriptJSON = {
       action: "audio-transcribe",
       retval: this.props.transcriptData
@@ -64,20 +58,21 @@ class GenerateTranscript extends Component {
     let prettyData = JSON.stringify(transcriptJSON, null, 4)
 
     this.props.download(prettyData, `${ filename }.json`)
+
     return transcriptJSON
   }
   reset(e) {
     this.props.resetTranscript()
   }
   render() {
-    const { 
-      transcript, 
-      browserSupportsSpeechRecognition, 
-      interimTranscript, 
-      listening, 
-      // allResults 
+    const {
+      transcript,
+      browserSupportsSpeechRecognition,
+      // interimTranscript,
+      listening,
+      // allResults
     } = this.props
-    // const {  } = this.state
+
     if (!browserSupportsSpeechRecognition) {
       // NOTE happens several times, as this gets rerendered for some reason. Returns false even when browser can support sometimes for some reason too, but eventually returns true
       return null

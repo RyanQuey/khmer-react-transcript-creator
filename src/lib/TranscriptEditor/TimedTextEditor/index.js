@@ -122,6 +122,16 @@ class TimedTextEditor extends React.Component {
   loadData() {
     if (this.props.transcriptData !== null) {
       const blocks = sttJsonAdapter(this.props.transcriptData, this.props.sttJsonType);
+      console.log("transcript data and json type", this.props.transcriptData, this.props.sttJsonType)
+      console.log("blocks", blocks.blocks)
+      if (blocks.blocks.length === 0) {
+        console.error("No Blocks returned!")
+        alert("No Blocks returned!")
+
+        // TODO this still breaks but allows user to continue doing some stuff at least...
+        // probably want better error handling
+        return 
+      }
       this.setEditorContentState(blocks);
     }
   }
@@ -221,6 +231,10 @@ class TimedTextEditor extends React.Component {
   * contains blocks and entityMap
   */
   setEditorContentState = (data) => {
+    console.log("data", data)
+    if (!data || !data.blocks.length) {
+      console.error("No data given!")
+    }
     const contentState = convertFromRaw(data);
     // eslint-disable-next-line no-use-before-define
     const editorState = EditorState.createWithContent(contentState, decorator);
