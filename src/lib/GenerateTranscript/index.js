@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import getAudio from './getAudio'
-import SpeechRecognition from 'react-speech-recognition'
+import SpeechRecognition from '../react-speech-recognition/src/'
 let counter = 1
 
 /*
@@ -12,19 +12,29 @@ const propTypes = {
 }
 */
 
+
 class GenerateTranscript extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
+
     this.stop = this.stop.bind(this)
     this.start = this.start.bind(this)
     this.reset = this.reset.bind(this)
-    console.log("opening")
+    this.generateJSON = this.generateJSON.bind(this)
+    this.captureSound = this.captureSound.bind(this)
 
+    // props.recognition.onresult 
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
     props.recognition.lang = "km"
+  }
+
+  componentWillMount() {
+  }
+
+  captureSound() {
   }
 
   stop(e) {
@@ -34,6 +44,27 @@ class GenerateTranscript extends Component {
   start(e) {
     console.log("starting")
     this.props.startListening()
+  }
+  generateJSON(e) {
+    console.log(e)
+    let transcriptJSON = {
+      action: "audio-transcribe",
+      retval: this.props.transcriptData
+    }
+    // if use finalTranscript, anything that hasn't been finalized isn't counted, which would be confusing, since even if you wait sometimes it isn't yet made final
+    transcriptJSON.retval.punct = this.props.transcript
+
+    this.setState({
+      transcriptJSON
+    })
+
+    console.log(transcriptJSON)
+    // content, filename, format
+    let filename = this.props.fileName.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s/g, "-")
+    let prettyData = JSON.stringify(transcriptJSON, null, 4)
+
+    this.props.download(prettyData, `${ filename }.json`)
+    return transcriptJSON
   }
   reset(e) {
     this.props.resetTranscript()
@@ -63,6 +94,7 @@ class GenerateTranscript extends Component {
         <button onClick = { this.reset } >Reset</button>
         <button onClick = { this.start } >Start</button>
         <button onClick = { this.stop } >Stop</button>
+        <button onClick = { this.generateJSON } >Generate</button>
         <div>
           {/*text.map((phrase, i) => */
             <span>{transcript}</span>
@@ -70,8 +102,8 @@ class GenerateTranscript extends Component {
         </div>
         { listening &&
           <span>
-            {counter % 2 == 0 ? "*" : "/"}
-            {counter % 2 == 0 ? "*" : "\""}
+            {counter % 2 == 0 ? "" : "*"}
+            {counter % 2 == 0 ? "" : "*"}
           </span>
         }
         <p>Volume</p>

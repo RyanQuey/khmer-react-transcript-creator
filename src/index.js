@@ -106,15 +106,15 @@ class App extends React.Component {
   }
 
   // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
-   download = (content, filename, contentType) => {
-     const type = contentType || 'application/octet-stream';
-     const a = document.createElement('a');
-     const blob = new Blob([ content ], { type: type });
+  download = (content, filename, contentType) => {
+    const type = contentType || 'application/octet-stream';
+    const a = document.createElement('a');
+    const blob = new Blob([ content ], { type: type });
 
-     a.href = window.URL.createObjectURL(blob);
-     a.download = filename;
-     a.click();
-   }
+    a.href = window.URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+  }
 
    clearLocalStorage = () => {
      localStorage.clear();
@@ -133,16 +133,19 @@ class App extends React.Component {
      return (
        <div className={ style.container }>
          <span className={ style.title }>
-            Demo page for <mark>React Transcript Editor</mark> - Component |{' '}
+            Demo page for <mark>Khmer Transcript Creator</mark> - Component |&nbsp;
            <a
-             href="https://github.com/bbc/react-transcript-editor"
+             href="https://github.com/RyanQuey/react-transcript-editor"
              rel="noopener noreferrer"
              target="_blank"
            >
             Github Repo
            </a>
          </span>
-         <GenerateTranscript />
+         <GenerateTranscript
+           download = { this.download }
+           fileName = {this.state.fileName}
+         />
          <br />
          <button onClick={ () => this.loadDemo() }>load demo</button>
          <hr />
@@ -197,13 +200,13 @@ class App extends React.Component {
          <hr/>
 
          <TranscriptEditor
-           transcriptData={ this.state.transcriptData }
-           fileName={ this.state.fileName }
-           mediaUrl={ this.state.mediaUrl }
-           isEditable={ this.state.isTextEditable }
-           sttJsonType={ this.state.sttType }
-           handleAnalyticsEvents={ this.handleAnalyticsEvents }
-           ref={ this.transcriptEditorRef }
+           transcriptData = { this.state.transcriptData }
+           fileName = { this.state.fileName }
+           mediaUrl = { this.state.mediaUrl }
+           isEditable = { this.state.isTextEditable }
+           sttJsonType = { this.state.sttType }
+           handleAnalyticsEvents = { this.handleAnalyticsEvents }
+           ref = { this.transcriptEditorRef }
          />
          <hr/>
          <label>Components Analytics</label>
