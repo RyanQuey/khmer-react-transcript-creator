@@ -33,11 +33,10 @@ class GenerateTranscript extends Component {
   }
 
   stop(e) {
-    console.log("stopping")
     this.props.stopListening()
   }
   start(e) {
-    console.log("starting")
+    // console.log("starting")
     this.props.startListening()
   }
   generateJSON(e) {
@@ -52,7 +51,7 @@ class GenerateTranscript extends Component {
       transcriptJSON
     })
 
-    console.log(transcriptJSON)
+    // console.log(transcriptJSON)
     // content, filename, format
     let filename = this.props.fileName.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s/g, "-")
     let prettyData = JSON.stringify(transcriptJSON, null, 4)
@@ -95,12 +94,13 @@ class GenerateTranscript extends Component {
             <span>{transcript}</span>
           }
         </div>
-        { listening &&
+        { listening ? (
           <span>
-            {counter % 2 == 0 ? "" : "*"}
-            {counter % 2 == 0 ? "" : "*"}
+            {counter % 2 == 0 ? <div>&nbsp;</div> : "**"}
           </span>
-        }
+        ) : (
+          <div>&nbsp;</div>
+        )}
         <p>Volume</p>
         <input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
 

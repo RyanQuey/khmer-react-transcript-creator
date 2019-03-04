@@ -236,6 +236,7 @@ class TimedTextEditor extends React.Component {
       console.error("No data given!")
     }
     const contentState = convertFromRaw(data);
+    console.log("content State", contentState)
     // eslint-disable-next-line no-use-before-define
     const editorState = EditorState.createWithContent(contentState, decorator);
 
