@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // import getAudio from './getAudio'
-import SpeechRecognition from '../react-speech-recognition/src/'
+import SpeechRecognition from '../updated-react-speech-recognition/src/'
 import { secondsToTimecode, timecodeToSeconds } from '../Util/timecode-converter/index';
 
 /*
