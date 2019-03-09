@@ -138,7 +138,6 @@ export default function SpeechRecognition(options) {
           // might not need
           allResults: event.results
         }
-        // console.log(event.results)
 
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           if (event.results[i].isFinal) {
