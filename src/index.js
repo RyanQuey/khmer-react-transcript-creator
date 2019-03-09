@@ -19,10 +19,12 @@ class App extends React.Component {
       isTextEditable: true,
       sttType: 'bbckaldi',
       analyticsEvents: [],
-      fileName: 'Khmer Transcript Data'
+      fileName: 'Khmer Transcript Data',
+      playingWhileListening: false,
     };
 
     this.transcriptEditorRef = React.createRef();
+    this.startListeningAndPlayingMedia = this.startListeningAndPlayingMedia.bind(this)
   }
 
   loadDemo() {
@@ -31,6 +33,10 @@ class App extends React.Component {
       mediaUrl: tedTalkVideoUrl,
       sttType: 'bbckaldi',
     });
+  }
+
+  startListeningAndPlayingMedia(e) {
+    this.setState({playingWhileListening: true})
   }
 
   // https://stackoverflow.com/questions/8885701/play-local-hard-drive-video-file-with-html5-video-tag
@@ -129,6 +135,7 @@ class App extends React.Component {
      this.setState({ fileName: value });
    }
 
+   playMedia
    render() {
      return (
        <div className={ style.container }>
@@ -145,6 +152,7 @@ class App extends React.Component {
          <GenerateTranscript
            download = { this.download }
            fileName = {this.state.fileName}
+           playingWhileListening = { this.state.playingWhileListening }
          />
          <br />
          <button onClick={ () => this.loadDemo() }>load demo</button>
@@ -202,6 +210,9 @@ class App extends React.Component {
          <br />
 
          <button onClick={ () => this.clearLocalStorage() }>Clear Local Storage</button>
+         {this.state.mediaUrl &&
+           <button onClick={ () => this.startListeningAndPlayingMedia() }>Generate Transcript from Media</button>
+         }
          <hr/>
 
          <TranscriptEditor
@@ -212,6 +223,7 @@ class App extends React.Component {
            sttJsonType = { this.state.sttType }
            handleAnalyticsEvents = { this.handleAnalyticsEvents }
            ref = { this.transcriptEditorRef }
+           playingWhileListening = { this.state.playingWhileListening }
          />
          <hr/>
 

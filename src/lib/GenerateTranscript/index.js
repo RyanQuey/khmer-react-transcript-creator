@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import getAudio from './getAudio'
 import SpeechRecognition from '../react-speech-recognition/src/'
-let counter = 1
+import { secondsToTimecode, timecodeToSeconds } from '../Util/timecode-converter/index';
 
 /*
 const propTypes = {
@@ -29,7 +29,10 @@ class GenerateTranscript extends Component {
     props.recognition.lang = "km"
   }
 
-  componentWillMount() {
+  componentDidUpdate(prevProps) {
+    if (this.props.playingWhileListening && !prevProps.playingWhileListening && !this.props.listening) {
+      this.props.startListening()
+    }
   }
 
   stop(e) {
@@ -76,11 +79,7 @@ class GenerateTranscript extends Component {
       // NOTE happens several times, as this gets rerendered for some reason. Returns false even when browser can support sometimes for some reason too, but eventually returns true
       return null
     }
-    if (listening) {
-      counter ++
-    }
     //TODO add back in once we switch over to using my fork  which passes down all results as an array rather than compiling all into a string
-    //console.log(allResults)
 
     return (
       <div>
@@ -88,21 +87,23 @@ class GenerateTranscript extends Component {
         <button onClick = { this.reset } >Reset</button>
         <button onClick = { this.start } >Start</button>
         <button onClick = { this.stop } >Stop</button>
-        <button onClick = { this.generateJSON } >Generate</button>
-        <div>
-          {/*text.map((phrase, i) => */
-            <span>{transcript}</span>
+        <button onClick = { this.generateJSON } >Generate Transcript JSON</button>
+        <div className="transcript-container" style={ { height: '240px', overflowY: 'auto' } }>
+          {
+            <div>{transcript}</div>
           }
         </div>
         { listening ? (
           <span>
-            {counter % 2 == 0 ? <div>&nbsp;</div> : "**"}
+            *Listening* Total Time Elapsed: {secondsToTimecode(this.props.totalTimeElapsed)}
           </span>
         ) : (
           <div>&nbsp;</div>
         )}
-        <p>Volume</p>
-        <input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
+        {false && <div>
+          <p>Volume</p>
+          <input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
+        </div>}
 
       </div>
     )

@@ -45,7 +45,7 @@ class MediaPlayer extends React.Component {
   /*eslint-disable camelcase */
   hot_keys = returnHotKeys(this);
 
-  static getDerivedStateFromProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.timecodeOffset !== null) {
       let newCurrentTimeInSeconds = nextProps.timecodeOffset ;
       if (typeof newCurrentTimeInSeconds ==='string'
@@ -67,6 +67,12 @@ class MediaPlayer extends React.Component {
     this.props.hookSeek(this.setCurrentTime);
     this.props.hookPlayMedia(this.togglePlayMedia);
     this.props.hookIsPlaying(this.isPlaying);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.playingWhileListening && !prevProps.playingWhileListening && !this.state.isPlaying) {
+      this.playMedia()
+    }
   }
 
   setCurrentTime = (newCurrentTime) => {

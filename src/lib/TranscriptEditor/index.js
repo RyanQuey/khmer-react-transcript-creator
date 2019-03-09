@@ -241,6 +241,7 @@ class TranscriptEditor extends React.Component {
       // ref={ 'MediaPlayer' }
       handleAnalyticsEvents={ this.props.handleAnalyticsEvents }
       handleSaveTranscript={ this.handleSaveTranscript }
+      playingWhileListening = { this.props.playingWhileListening }
     />;
 
     const settings = <Settings
