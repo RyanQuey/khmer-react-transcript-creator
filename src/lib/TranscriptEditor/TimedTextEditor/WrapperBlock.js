@@ -94,18 +94,21 @@ class WrapperBlock extends React.Component {
     const doIt = () => {
 
       let newStartTime = prompt('New Time in seconds? (Prev time: [coming soon])');
-      newStartTime = parseFloat(newStartTime)
 
       if (newStartTime !== '' && newStartTime !== null) {
+        newStartTime = parseFloat(newStartTime)
 
         // make them put in new time or just cancel if start time is after end time
-        if (newStartTime >= this.getEndTime() ||
-          newStartTime <= this.getPrevStartTime()
-        ) {
+        if (newStartTime >= this.getEndTime()) {
           alert("Start Time must be before next block's start time")
 
           return
+        } else if (newStartTime <= this.getPrevStartTime()) {
+          alert("Start Time must be after previous block's start time")
+
+          return
         }
+
 
         this.setState({ start: newStartTime });
 
