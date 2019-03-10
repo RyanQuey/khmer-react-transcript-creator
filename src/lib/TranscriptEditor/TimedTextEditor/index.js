@@ -517,7 +517,7 @@ class TimedTextEditor extends React.Component {
     </Tooltip>;
 
     const currentWord = this.getCurrentWord();
-    const highlightColour = '#69e3c2';
+    const highlightColour = '#c0def3';
     const unplayedColor = '#767676';
     const correctionBorder = '1px dotted blue';
 
@@ -530,11 +530,11 @@ class TimedTextEditor extends React.Component {
         onDoubleClick={ event => this.handleDoubleClick(event) }>
 
         <style scoped>
-          {`span.Word[data-start="${ currentWord.start }"] { background-color: ${ highlightColour }; text-shadow: 0 0 0.01px black }`}
-          {`span.Word[data-start="${ currentWord.start }"]+span { background-color: ${ highlightColour } }`}
-          {`span.Word[data-prev-times~="${ Math.floor(time) }"] { color: ${ unplayedColor } }`}
-          {`span.Word[data-prev-times~="${ time }"] { color: ${ unplayedColor } }`}
-          {`span.Word[data-confidence="low"] { border-bottom: ${ correctionBorder } }`}
+          {`div.Word[data-start="${ currentWord.start }"] { background-color: ${ highlightColour }; text-shadow: 0 0 0.01px black }`}
+          {/*`div.Word[data-start="${ currentWord.start }"]+span { background-color: ${ highlightColour } }` This would highlight edits that are added to the original. Doesn't highlight text before though...would have to use JS and dig into draft js more   */}
+          {`div.Word[data-prev-times~="${ Math.floor(time) }"] { color: ${ unplayedColor } }`}
+          {`div.Word[data-prev-times~="${ time }"] { color: ${ unplayedColor } }`}
+          {`div.Word[data-confidence="low"] { border-bottom: ${ correctionBorder } }`}
         </style>
 
         <Editor

@@ -33,7 +33,8 @@ class Word extends PureComponent {
       : {};
 
     return (
-      <span
+      <div
+        style={ { display: 'inline-block' } }
         data-start={ data.start }
         data-end={ data.end }
         data-confidence = { this.generateConfidence(data) }
@@ -41,7 +42,7 @@ class Word extends PureComponent {
         data-entity-key={ data.key }
         className="Word">
         {this.props.children}
-      </span>
+      </div>
     );
   }
 }

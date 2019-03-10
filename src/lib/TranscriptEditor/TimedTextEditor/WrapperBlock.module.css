@@ -3,16 +3,18 @@
 .WrapperBlock {
   height: 100%;
   width: 100%;
-  margin-bottom: 2em;
-  line-height: 1.2em;
+  margin-bottom: 1em;
+  line-height: 2.4em;/* bigger for Khmer */
   overflow: hidden;
 }
 
 .markers {
   width: 25%;
   font-size: 0.8em;
-  line-height: 1.2em;
   float: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .text {
@@ -20,6 +22,7 @@
   font-size: 1em;
   float: right;
   clear: right;
+  line-height: 2.4em;/* bigger for Khmer */
 }
 
 .speaker {
@@ -42,8 +45,8 @@
   font-weight: lighter;
   vertical-align: middle;
   cursor: pointer;
-  float: right;
-  line-height: 1.4em;
+  /* float: right; */ 
+  line-height: 2.4em;
   margin-right: 0.5em;
 }
 
