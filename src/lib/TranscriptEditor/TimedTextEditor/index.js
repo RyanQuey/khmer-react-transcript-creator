@@ -399,6 +399,7 @@ class TimedTextEditor extends React.Component {
       }
       const newBlock = newContentState.getBlockAfter(originalBlock.getKey());
       // make word and punct just the new words and punct
+      // TODO thinking of maybe keeping the original punct and word keys alone, even when splitting, since we never use it. Though it does make things confusing, shows where things originated from, and we never use that data (I think...) in the actual app
       wordsDataForNew = wordsDataForNew.setIn([ 0, 'word' ], newBlock.getText())
         .setIn([ 0, 'punct' ], newBlock.getText());
 
@@ -419,6 +420,7 @@ class TimedTextEditor extends React.Component {
         wordsDataForOld = fromJS(wordsDataForOld);
       }
       const wordsLeft = originalBlock.getText().slice(0, - (newBlock.getText().length));
+      // TODO thinking of maybe keeping the original punct and word keys alone, even when splitting, since we never use it. Though it does make things confusing, shows where things originated from, and we never use that data (I think...) in the actual app
       wordsDataForOld = wordsDataForOld.setIn([ 0, 'word' ], wordsLeft)
         .setIn([ 0, 'punct' ], wordsLeft);
 

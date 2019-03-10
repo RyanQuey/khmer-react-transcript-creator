@@ -194,7 +194,9 @@ class WrapperBlock extends React.Component {
 
   }
 
-  handleJumpToHereClick = () => {
+  handleJumpToHereClick = (e) => {
+    // https://github.com/facebook/draft-js/issues/696#issuecomment-302903086
+    e.preventDefault() // prevents cursor from moving away
     this.props.blockProps.onJumpToHereClick(this.state.start);
   }
 
@@ -215,7 +217,7 @@ class WrapperBlock extends React.Component {
     return (
       <div className={ style.WrapperBlock }>
         <div className={ style.markers }>
-          <button onClick={ this.handleJumpToHereClick }>Jump to Here</button>
+          <button onMouseDown={ this.handleJumpToHereClick }>Jump to Here</button>
           {blockProps.showSpeakers ? speakerElement : ''}
           {blockProps.showTimecodes ? timecodeElement : ''}
         </div>
