@@ -89,10 +89,11 @@ class WrapperBlock extends React.Component {
   }
 
   handleTimecodeClick = () => {
+    let wasPlaying = this.props.blockProps.isPlaying();
     this.props.blockProps.togglePlayMedia(false);
-    console.log("stopping@")
-    const doIt = () => {
 
+    // does the whole thing after making sure it's really paused
+    const doIt = () => {
       let newStartTime = prompt('New Time in seconds? (Prev time: [coming soon])');
 
       if (newStartTime !== '' && newStartTime !== null) {
@@ -176,7 +177,9 @@ class WrapperBlock extends React.Component {
           this.props.blockProps.setEditorNewContentState(newPrevBlockContentState);
         }
       }
-      // this.props.blockProps.togglePlayMedia(true)
+      if (wasPlaying) {
+        this.props.blockProps.togglePlayMedia(true)
+      }
     }
 
     // this is so bad...but so is using prompt ha

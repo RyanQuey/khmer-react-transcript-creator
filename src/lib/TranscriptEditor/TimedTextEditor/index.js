@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Tooltip from 'react-simple-tooltip';
+import { Map, List, fromJS } from 'immutable'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle, faMousePointer, faICursor, faUserEdit, faKeyboard, faSave } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +14,8 @@ import {
   convertToRaw,
   getDefaultKeyBinding,
   Modifier,
-  KeyBindingUtil
+  KeyBindingUtil,
+  SelectionState,
 } from 'draft-js';
 
 import Word from './Word';
@@ -349,6 +351,7 @@ class TimedTextEditor extends React.Component {
       // https://draftjs.org/docs/api-reference-modifier#splitblock
       const newContentState = Modifier.splitBlock(currentContent, currentSelection);
       // https://draftjs.org/docs/api-reference-editor-state#push
+      // splitState is new editor state after the push
       const splitState = EditorState.push(this.state.editorState, newContentState, 'split-block');
       const targetSelection = splitState.getSelection();
 
@@ -389,10 +392,15 @@ class TimedTextEditor extends React.Component {
       // https://draftjs.org/docs/api-reference-modifier#mergeblockdata
 
       // adding words data too
-      const wordsDataForNew = originalBlock.get("words") || [ {} ]
+      // starts with same worddata, and then replace the 'word' and 'punct' keys
+      let wordsDataForNew = originalBlockData.get('words') || [ {} ];
+      if (!List.isList(wordsDataForNew) || !Map.isMap(wordsDataForNew)) {
+        wordsDataForNew = fromJS(wordsDataForNew);
+      }
       const newBlock = newContentState.getBlockAfter(originalBlock.getKey());
       // make word and punct just the new words and punct
-      wordsDataForNew[0].word = wordsDataForNew[0].punct = newBlock.getText()
+      wordsDataForNew = wordsDataForNew.setIn([ 0, 'word' ], newBlock.getText())
+        .setIn([ 0, 'punct' ], newBlock.getText());
 
       const afterMergeContentState = Modifier.mergeBlockData(
         splitState.getCurrentContent(),
@@ -403,16 +411,22 @@ class TimedTextEditor extends React.Component {
           'words': wordsDataForNew,
         }
       );
-      let newestEditorState = this.setEditorNewContentState(afterMergeContentState);
+      const newestEditorState = this.setEditorNewContentState(afterMergeContentState);
 
       // update old transcript word and punct
-      const wordsDataForOld = originalBlockData.get("words") || [ {} ]
-      wordsDataForOld[0].word = wordsDataForOld[0].punct = newBlock.getText()
+      let wordsDataForOld = originalBlockData.get('words') || [ {} ];
+      if (!List.isList(wordsDataForOld) || !Map.isMap(wordsDataForOld)) {
+        wordsDataForOld = fromJS(wordsDataForOld);
+      }
+      const wordsLeft = originalBlock.getText().slice(0, - (newBlock.getText().length));
+      wordsDataForOld = wordsDataForOld.setIn([ 0, 'word' ], wordsLeft)
+        .setIn([ 0, 'punct' ], wordsLeft);
+
       const afterMergeContentState2 = Modifier.mergeBlockData(
         newestEditorState.getCurrentContent(),
-        targetSelection,
+        SelectionState.createEmpty(originalBlock.getKey()),
         {
-          'words': wordsDataForNew,
+          'words': wordsDataForOld,
         }
       );
       this.setEditorNewContentState(afterMergeContentState2);
