@@ -130,7 +130,6 @@ const groupWordsInParagraphs = (words) => {
 
   // for us, until can figure out a way to go from speech recognition to punctuation, so can divide up speech blocks, with Khmer just want to make each word a paragraph, since that's kind of what ends up happening.
   words.forEach((word) => {
-    console.log("word", word)
     // if word contains punctuation TODO add Khmer punctuation. Right now, will always return false
     if (true || /[.?!\s]/.test(word.punct)) {
       paragraph.words.push(word);
@@ -162,10 +161,8 @@ const bbcKaldiToDraft = (bbcKaldiJson) => {
     tmpWords = bbcKaldiJson.words;
   }
 
-  console.log("tmpWords", tmpWords)
   const wordsByParagraphs = groupWordsInParagraphs(tmpWords);
 
-  console.log("wordsByParagraphs", wordsByParagraphs)
   wordsByParagraphs.forEach((paragraph, i) => {
     if (!paragraph.words.length) {
       return

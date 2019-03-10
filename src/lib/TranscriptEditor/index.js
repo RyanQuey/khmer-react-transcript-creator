@@ -72,7 +72,6 @@ class TranscriptEditor extends React.Component {
   ifPresentRetrieveTranscriptFromLocalStorage = () => {
     // if (this.timedTextEditorRef.current!== undefined) {
     if (this.timedTextEditorRef.current) {
-      console.log(this.timedTextEditorRef)
       if (this.timedTextEditorRef.current.isPresentInLocalStorage(this.props.mediaUrl)) {
         console.info('was already present in local storage');
         this.timedTextEditorRef.current.loadLocalSavedData(this.props.mediaUrl);
@@ -83,6 +82,7 @@ class TranscriptEditor extends React.Component {
   }
 
   // eslint-disable-next-line class-methods-use-this
+  // when double click a single word
   handleWordClick = (startTime) => {
     if (this.props.handleAnalyticsEvents !== undefined) {
       this.props.handleAnalyticsEvents({
@@ -93,6 +93,24 @@ class TranscriptEditor extends React.Component {
       });
     }
 
+    this.jumpToHere(startTime)
+  }
+
+  handleJumpToHereClick = (startTime) => {
+    this.jumpToHere(startTime)
+  }
+
+  jumpToHere = (startTime) => {
+    // TODO add analytics stuff...except I don't care right now haha
+
+    // happens if the data gets messed up and they click on a paragraph that has that faulty data
+    // TODO allow editing timing so this can get fixed
+    if ([ NaN, undefined ].includes(startTime)) {
+      console.error("startTime cannot be set to be NaN or undefined");
+
+      return
+    }
+    console.log(startTime);
     this.setCurrentTime(startTime);
   }
 
@@ -104,7 +122,7 @@ class TranscriptEditor extends React.Component {
   }
 
   handlePlayMedia = (bool) => {
-    this.playMedia(bool);
+    this.playMedia(null, bool);
   }
 
   handleIsPlaying = () => {
@@ -270,6 +288,7 @@ class TranscriptEditor extends React.Component {
       transcriptData={ this.state.transcriptData }
       timecodeOffset={ this.state.timecodeOffset }
       onWordClick={ this.handleWordClick }
+      onJumpToHereClick={ this.handleJumpToHereClick }
       playMedia={ this.handlePlayMedia }
       isPlaying={ this.handleIsPlaying }
       currentTime={ this.state.currentTime }

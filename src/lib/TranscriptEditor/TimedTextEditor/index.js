@@ -38,7 +38,8 @@ class TimedTextEditor extends React.Component {
       showSpeakers: this.props.showSpeakers,
       showTimecodes: this.props.showTimecodes,
       // inputCount: 0,
-      currentWord: {}
+      currentWord: {},
+      settingTimecodeFor: null,
     };
   }
 
@@ -95,8 +96,8 @@ class TimedTextEditor extends React.Component {
           // Pause video for X seconds
           const pauseWhileTypingIntervalInMilliseconds = 3000;
           // resets timeout
-          clearTimeout(this.plauseWhileTypingTimeOut);
-          this.plauseWhileTypingTimeOut = setTimeout(function() {
+          clearTimeout(this.pauseWhileTypingTimeOut);
+          this.pauseWhileTypingTimeOut = setTimeout(function() {
             // after timeout starts playing again
             this.props.playMedia(true);
           }.bind(this), pauseWhileTypingIntervalInMilliseconds);
@@ -276,6 +277,8 @@ class TimedTextEditor extends React.Component {
   setEditorNewContentState = (newContentState) => {
     const newEditorState = EditorState.push(this.state.editorState, newContentState);
     this.setState({ editorState: newEditorState });
+
+    return newEditorState
   }
 
   /**
@@ -384,15 +387,36 @@ class TimedTextEditor extends React.Component {
       }
       // split paragraph
       // https://draftjs.org/docs/api-reference-modifier#mergeblockdata
+
+      // adding words data too
+      const wordsDataForNew = originalBlock.get("words") || [ {} ]
+      const newBlock = newContentState.getBlockAfter(originalBlock.getKey());
+      // make word and punct just the new words and punct
+      wordsDataForNew[0].word = wordsDataForNew[0].punct = newBlock.getText()
+
       const afterMergeContentState = Modifier.mergeBlockData(
         splitState.getCurrentContent(),
         targetSelection,
         {
           'start': wordStartTime,
-          'speaker': blockSpeaker
+          'speaker': blockSpeaker,
+          'words': wordsDataForNew,
         }
       );
-      this.setEditorNewContentState(afterMergeContentState);
+      let newestEditorState = this.setEditorNewContentState(afterMergeContentState);
+
+      // update old transcript word and punct
+      const wordsDataForOld = originalBlockData.get("words") || [ {} ]
+      wordsDataForOld[0].word = wordsDataForOld[0].punct = newBlock.getText()
+      const afterMergeContentState2 = Modifier.mergeBlockData(
+        newestEditorState.getCurrentContent(),
+        targetSelection,
+        {
+          'words': wordsDataForNew,
+        }
+      );
+      this.setEditorNewContentState(afterMergeContentState2);
+
 
       return 'handled';
     }
@@ -447,6 +471,10 @@ class TimedTextEditor extends React.Component {
     return { entityKey, isEndOfParagraph };
   }
 
+  updateTimecode = (data) => {
+    console.log("updating with data", data)
+  }
+
   renderBlockWithTimecodes = () => {
     return {
       component: WrapperBlock,
@@ -457,8 +485,13 @@ class TimedTextEditor extends React.Component {
         timecodeOffset: this.state.timecodeOffset,
         editorState: this.state.editorState,
         setEditorNewContentState: this.setEditorNewContentState,
+        onJumpToHereClick: this.props.onJumpToHereClick,
         onWordClick: this.props.onWordClick,
-        handleAnalyticsEvents: this.props.handleAnalyticsEvents
+        handleAnalyticsEvents: this.props.handleAnalyticsEvents,
+        settingTimecodeFor: this.state.settingTimecodeFor,
+        updateTimecode: this.updateTimecode,
+        togglePlayMedia: this.props.playMedia,
+        isPlaying: this.props.isPlaying,
       }
     };
   }

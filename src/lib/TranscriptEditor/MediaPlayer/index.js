@@ -272,14 +272,20 @@ class MediaPlayer extends React.Component {
 
   // Sets isPlaying state and toggles modes on the video player
   // TODO: modularise these / enable specific play / pause action
-  togglePlayMedia = () => {
+  togglePlayMedia = (e, bool) => {
+    // if no bool specified, then really just toggle
+    console.log("in media stopping@")
+    if (bool === undefined) {
+      bool = !this.state.isPlaying
+    }
     if (this.videoRef.current !== null) {
-      if (this.state.isPlaying) {
+      if (this.state.isPlaying && !bool) {
         this.pauseMedia();
       }
-      else {
+      else if (!this.state.isPlaying && bool) {
         this.playMedia();
       }
+      // in other situations, do nothing
     }
   }
 
