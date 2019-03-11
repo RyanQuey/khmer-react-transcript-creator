@@ -116,7 +116,7 @@
  *
  */
 
-import generateEntitiesRanges from '../generate-entities-ranges/index.js';
+// import generateEntitiesRanges from '../generate-entities-ranges/index.js';
 
 /**
  * groups words list from kaldi transcript based on punctuation.
@@ -176,9 +176,6 @@ const bbcKaldiToDraft = (bbcKaldiJson) => {
         words: paragraph.words,
         start: paragraph.words[0].start
       },
-      // the entities as ranges are each word in the space-joined text,
-      // so it needs to be compute for each the offset from the beginning of the paragraph and the length
-      entityRanges: generateEntitiesRanges(paragraph.words, 'punct'), // wordAttributeName
     };
     // console.log(JSON.stringify(draftJsContentBlockParagraph,null,2))
     results.push(draftJsContentBlockParagraph);

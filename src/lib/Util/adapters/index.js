@@ -10,6 +10,7 @@ import speechmaticsToDraft from './speechmatics/index';
 // converts nested arrays into one dimensional array
 const flatten = list => list.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 
+/*
 const createEntityMap = (blocks) => {
   const entityRanges = blocks.map(block => block.entityRanges);
   // eslint-disable-next-line no-use-before-define
@@ -27,6 +28,7 @@ const createEntityMap = (blocks) => {
 
   return entityMap;
 };
+*/
 
 const sttJsonAdapter = (transcriptData, sttJsonType) => {
   let blocks;
@@ -34,15 +36,15 @@ const sttJsonAdapter = (transcriptData, sttJsonType) => {
   case 'bbckaldi':
     blocks = bbcKaldiToDraft(transcriptData);
 
-    return { blocks, entityMap: createEntityMap(blocks) };
+    return { blocks, entityMap: {} }; //createEntityMap(blocks) };
   case 'autoedit2':
     blocks = autoEdit2ToDraft(transcriptData);
 
-    return { blocks, entityMap: createEntityMap(blocks) };
+    return { blocks, entityMap: {} }; // createEntityMap(blocks) };
   case 'speechmatics':
     blocks = speechmaticsToDraft(transcriptData);
 
-    return { blocks, entityMap: createEntityMap(blocks) };
+    return { blocks, entityMap: {} }; //  createEntityMap(blocks) };
   case 'draftjs':
     return transcriptData; // (typeof transcriptData === 'string')? JSON.parse(transcriptData): transcriptData;
   default:

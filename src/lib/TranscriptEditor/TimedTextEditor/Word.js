@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Map, List, fromJS } from 'immutable'
 import PropTypes from 'prop-types';
 
 class Word extends PureComponent {
@@ -28,18 +29,26 @@ class Word extends PureComponent {
   }
 
   render() {
-    const data = this.props.entityKey
-      ? this.props.contentState.getEntity(this.props.entityKey).getData()
-      : {};
+    // including a lot of catchers since there always seems to be an empty block with no text and data sneaking in here
+    let data = this.props.block && this.props.block.getData() || { words: [ {} ] }
+    if (Map.isMap(data)) {
+      data = data.toJSON()
+    }
+    let wordsData = data.words || {}
+    wordsData = wordsData[0] ? wordsData[0] : {}
+
 
     return (
       <div
-        style={ { display: 'inline-block' } }
-        data-start={ data.start }
-        data-end={ data.end }
-        data-confidence = { this.generateConfidence(data) }
-        data-prev-times = { this.generatePreviousTimes(data) }
-        data-entity-key={ data.key }
+        style={ {
+          display: 'inline-block',
+        } }
+        data-start={ wordsData.start }
+        data-end={ wordsData.end }
+        data-confidence = { this.generateConfidence(wordsData) }
+        data-prev-times = { this.generatePreviousTimes(wordsData) }
+        data-entity-key={ '' }
+        data-block-key={ this.props.block.getKey() }
         className="Word">
         {this.props.children}
       </div>
@@ -49,8 +58,9 @@ class Word extends PureComponent {
 
 Word.propTypes = {
   contentState: PropTypes.object,
-  entityKey: PropTypes.string,
-  children: PropTypes.array
+  //entityKey: PropTypes.string,
+  block: PropTypes.object,
+  // children: PropTypes.array
 };
 
 export default Word;

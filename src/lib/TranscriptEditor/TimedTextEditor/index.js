@@ -96,7 +96,7 @@ class TimedTextEditor extends React.Component {
         if (this.props.isPlaying()) {
           this.props.playMedia(false);
           // Pause video for X seconds
-          const pauseWhileTypingIntervalInMilliseconds = 3000;
+          const pauseWhileTypingIntervalInMilliseconds = 4*1000;
           // resets timeout
           clearTimeout(this.pauseWhileTypingTimeOut);
           this.pauseWhileTypingTimeOut = setTimeout(function() {
@@ -105,6 +105,20 @@ class TimedTextEditor extends React.Component {
           }.bind(this), pauseWhileTypingIntervalInMilliseconds);
         }
       }
+
+      /*
+      // trying to keep length to whole block, including latest additions
+      const contentState = editorState.getCurrentContent();
+      const blockKey = contentState.getSelectionAfter().getStartKey() // TODO maybe should be getSelectionAfter
+      const currentBlock = contentState.getBlockForKey(blockKey)
+      console.log("block key", blockKey, currentBlock)
+      const entityKey = this.findEntityKeyForBlock(currentBlock)
+      console.log(entityKey)
+      contentState.mergeEntityData(entityKey, {
+        offset: 0,
+        length: currentBlock.getText().length
+      })
+      */
     }
 
     if (this.state.isEditable) {
@@ -120,7 +134,23 @@ class TimedTextEditor extends React.Component {
         }, 5000);
       });
     }
+
   }
+
+  // helper for getting the entity for the block
+  // apparently there's no better way.. https://github.com/facebook/draft-js/issues/1681
+  /*
+  findEntityKeyForBlock = (block) => {
+    let entity
+    for (var i = 0; i < block.getText().length; i++) {
+      entity = block.getEntityAt(i)
+      if (entity) {
+        break
+      }
+    }
+  
+    return entity
+  } */
 
   loadData() {
     if (this.props.transcriptData !== null) {
@@ -234,14 +264,12 @@ class TimedTextEditor extends React.Component {
   * contains blocks and entityMap
   */
   setEditorContentState = (data) => {
-    console.log("data", data)
     if (!data || !data.blocks.length) {
       console.error("No data given!")
     }
     const contentState = convertFromRaw(data);
-    console.log("content State", contentState)
     // eslint-disable-next-line no-use-before-define
-    const editorState = EditorState.createWithContent(contentState, decorator);
+    const editorState = EditorState.createWithContent(contentState); // , decorator);
 
     if (this.props.handleAnalyticsEvents !== undefined) {
       this.props.handleAnalyticsEvents({
@@ -258,14 +286,15 @@ class TimedTextEditor extends React.Component {
   // Helper function to re-render this component
   // used to re-render WrapperBlock on timecode offset change
   // or when show / hide preferences for speaker labels and timecodes change
+  // RQ: trying without decorator for speed 
   forceRenderDecorator = () => {
     // const { editorState, updateEditorState } = this.props;
     const contentState = this.state.editorState.getCurrentContent();
-    const decorator = this.state.editorState.getDecorator();
+    // const decorator = this.state.editorState.getDecorator();
 
     const newState = EditorState.createWithContent(
       contentState,
-      decorator
+      // decorator
     );
 
     // this.setEditorNewContentState(newState);
@@ -358,43 +387,18 @@ class TimedTextEditor extends React.Component {
       const originalBlock = currentContent.blockMap.get(newContentState.selectionBefore.getStartKey());
       const originalBlockData = originalBlock.getData();
       const blockSpeaker = originalBlockData.get('speaker');
+      const blockStartTime = originalBlockData.get('start');
 
-      let wordStartTime = 'NA';
-      // eslint-disable-next-line prefer-const
-      let isEndOfParagraph = false;
-      // identify the entity (word) at the selection/cursor point on split.
-      // eslint-disable-next-line prefer-const
-      let entityKey = originalBlock.getEntityAt(currentSelection.getStartOffset());
-      // if there is no word entity associated with a char then there is no entity key
-      // at that selection point
-      if (entityKey === null) {
-        const closestEntityToSelection = this.findClosestEntityKeyToSelectionPoint(currentSelection, originalBlock);
-        entityKey = closestEntityToSelection.entityKey;
-        isEndOfParagraph = closestEntityToSelection.isEndOfParagraph;
-        // handle edge case when it doesn't find a closest entity (word)
-        // eg pres enter on an empty line
-        if (entityKey === null) {
-          return 'not-handled';
-        }
-      }
-      // if there is an entityKey at or close to the selection point
-      // can get the word startTime. for the new paragraph.
-      const entityInstance = currentContent.getEntity(entityKey);
-      const entityData = entityInstance.getData();
-      if (isEndOfParagraph) {
-        // if it's end of paragraph use end time of word for new paragraph
-        wordStartTime = entityData.end;
-      }
-      else {
-        wordStartTime = entityData.start;
-      }
+      const wordStartTime = blockStartTime;
+
       // split paragraph
       // https://draftjs.org/docs/api-reference-modifier#mergeblockdata
 
       // adding words data too
       // starts with same worddata, and then replace the 'word' and 'punct' keys
       let wordsDataForNew = originalBlockData.get('words') || [ {} ];
-      if (!List.isList(wordsDataForNew) || !Map.isMap(wordsDataForNew)) {
+      // if (!List.isList(wordsDataForNew) || !Map.isMap(wordsDataForNew)) {
+      if (!Map.isMap(wordsDataForNew)) {
         wordsDataForNew = fromJS(wordsDataForNew);
       }
       const newBlock = newContentState.getBlockAfter(originalBlock.getKey());
@@ -416,7 +420,8 @@ class TimedTextEditor extends React.Component {
 
       // update old transcript word and punct
       let wordsDataForOld = originalBlockData.get('words') || [ {} ];
-      if (!List.isList(wordsDataForOld) || !Map.isMap(wordsDataForOld)) {
+      // if (!List.isList(wordsDataForOld) || !Map.isMap(wordsDataForOld)) {
+      if (!Map.isMap(wordsDataForOld)) {
         wordsDataForOld = fromJS(wordsDataForOld);
       }
       const wordsLeft = originalBlock.getText().slice(0, - (newBlock.getText().length));
@@ -447,6 +452,7 @@ class TimedTextEditor extends React.Component {
    * Looks before if it's last char in a paragraph block.
    * After for everything else.
    */
+    /*
   findClosestEntityKeyToSelectionPoint = (currentSelection, originalBlock) => {
     // set defaults
     let entityKey = null;
@@ -485,7 +491,7 @@ class TimedTextEditor extends React.Component {
 
     // cover edge cases where it doesn't find it
     return { entityKey, isEndOfParagraph };
-  }
+  }*/
 
   updateTimecode = (data) => {
     console.log("updating with data", data)
@@ -522,11 +528,11 @@ class TimedTextEditor extends React.Component {
       const contentState = this.state.editorState.getCurrentContent();
       // TODO: using convertToRaw here might be slowing down performance(?)
       const contentStateConvertEdToRaw = convertToRaw(contentState);
-      const entityMap = contentStateConvertEdToRaw.entityMap;
+      const blockMap = contentStateConvertEdToRaw.blocks;
 
-      for (var entityKey in entityMap) {
-        const entity = entityMap[entityKey];
-        const word = entity.data;
+      for (var blockKey in blockMap) {
+        const block = blockMap[blockKey] || {};
+        const word = ((block.data || {}).words || [])[0] || {};
 
         if (word.start <= this.props.currentTime && word.end >= this.props.currentTime) {
           currentWord.start = word.start;
@@ -608,6 +614,7 @@ class TimedTextEditor extends React.Component {
 
 // DraftJs decorator to recognize which entity is which
 // and know what to apply to what component
+  /*
 const getEntityStrategy = mutability => (contentBlock, callback, contentState) => {
   contentBlock.findEntityRanges((character) => {
     const entityKey = character.getEntity();
@@ -627,6 +634,7 @@ const decorator = new CompositeDecorator([
     component: Word,
   },
 ]);
+*/ // NOTE no longer using entities, so not really using the Word component in same way either, just using the WrapperBlock
 
 TimedTextEditor.propTypes = {
   transcriptData: PropTypes.object,

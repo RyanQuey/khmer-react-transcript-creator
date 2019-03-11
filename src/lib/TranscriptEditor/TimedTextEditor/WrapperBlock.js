@@ -2,6 +2,7 @@ import React from 'react';
 import { EditorBlock, Modifier, EditorState, SelectionState } from 'draft-js';
 
 import SpeakerLabel from './SpeakerLabel';
+import Word from './Word';
 import { shortTimecode, secondsToTimecode, timecodeToSeconds } from '../../Util/timecode-converter/';
 
 import style from './WrapperBlock.module.css';
@@ -128,19 +129,16 @@ class WrapperBlock extends React.Component {
         const currentBlockSelectionState = editorStateWithSelectedCurrentBlock.getSelection();
 
         let wordsData = this.props.block.getData().get('words') || [ {} ] // really should just break...being too flexible here...
-        console.log("words data", wordsData)
-        if (!List.isList(wordsData) || !Map.isMap(wordsData)) {
+        // if (!List.isList(wordsData) || !Map.isMap(wordsData)) {
+        if (!Map.isMap(wordsData)) {
           wordsData = fromJS(wordsData)
         }
         wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
-        console.log("words data", wordsData)
 
         const newBlockData = {
           start: newStartTime,
           words: wordsData,
         };
-        console.log(newBlockData, newBlockData.words.toJSON()[0])
-
 
         // https://draftjs.org/docs/api-reference-modifier#mergeblockdata
         const newContentState = Modifier.mergeBlockData(
@@ -162,7 +160,8 @@ class WrapperBlock extends React.Component {
           const prevBlockSelectionState = editorStateWithSelectedPrevBlock.getSelection();
           let prevWordsData = previousBlock.getData().get('words') || [ {} ]// really should just break...being too flexible here...
           // draft js will turn into immutable anyways, so might as well beat them to the punch
-          if (!List.isList(prevWordsData) || !Map.isMap(prevWordsData)) {
+          // if (!List.isList(prevWordsData) || !Map.isMap(prevWordsData)) {
+          if (!Map.isMap(prevWordsData)) {
             prevWordsData = fromJS(prevWordsData)
           }
           prevWordsData = prevWordsData.setIn([ 0, 'end' ], newStartTime)
@@ -193,7 +192,6 @@ class WrapperBlock extends React.Component {
         clearInterval(interval)
         doIt();
       }
-      console.log("still waiting")
     }, 20)
 
   }
@@ -226,7 +224,9 @@ class WrapperBlock extends React.Component {
           {blockProps.showTimecodes ? timecodeElement : ''}
         </div>
         <div className={ style.text }>
-          <EditorBlock { ...this.props } />
+          <Word block={ this.props.block }>
+            <EditorBlock { ...this.props } />
+          </Word>
         </div>
       </div>
     );
