@@ -530,9 +530,14 @@ class TimedTextEditor extends React.Component {
       const contentStateConvertEdToRaw = convertToRaw(contentState);
       const blockMap = contentStateConvertEdToRaw.blocks;
 
+      // TODO since ran so many times, consider slightly faster loop (reg for loop?)
       for (var blockKey in blockMap) {
         const block = blockMap[blockKey] || {};
-        const word = ((block.data || {}).words || [])[0] || {};
+        let word = ((block.data || {}).words || [])[0] || {};
+        // TODO happens if we split a paragraph...need a better more consistent system for this...
+        if (List.isList(word)) {
+          word = word.toJSON()
+        }
 
         if (word.start <= this.props.currentTime && word.end >= this.props.currentTime) {
           currentWord.start = word.start;
