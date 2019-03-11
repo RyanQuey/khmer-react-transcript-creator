@@ -274,7 +274,6 @@ class MediaPlayer extends React.Component {
   // TODO: modularise these / enable specific play / pause action
   togglePlayMedia = (e, bool) => {
     // if no bool specified, then really just toggle
-    console.log("in media stopping@")
     if (bool === undefined) {
       bool = !this.state.isPlaying
     }
