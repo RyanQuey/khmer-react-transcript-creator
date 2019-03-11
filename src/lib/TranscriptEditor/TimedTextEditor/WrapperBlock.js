@@ -2,7 +2,7 @@ import React from 'react';
 import { EditorBlock, Modifier, EditorState, SelectionState } from 'draft-js';
 
 import SpeakerLabel from './SpeakerLabel';
-import { shortTimecode, secondsToTimecode } from '../../Util/timecode-converter/';
+import { shortTimecode, secondsToTimecode, timecodeToSeconds } from '../../Util/timecode-converter/';
 
 import style from './WrapperBlock.module.css';
 import { Map, List, fromJS } from 'immutable'
@@ -94,9 +94,13 @@ class WrapperBlock extends React.Component {
 
     // does the whole thing after making sure it's really paused
     const doIt = () => {
-      let newStartTime = prompt('New Time in seconds? (Prev time: [coming soon])');
+      let currentTime = secondsToTimecode(this.props.block.getData().get('start'))
+      let newStartTime = prompt(`Edit Time - hh:mm:ss:ff hh:mm:ss mm:ss m:ss m.ss seconds`, currentTime);
 
       if (newStartTime !== '' && newStartTime !== null) {
+        if (newStartTime.includes(':')) {
+          newStartTime = timecodeToSeconds(newStartTime)
+        }
         newStartTime = parseFloat(newStartTime)
 
         // make them put in new time or just cancel if start time is after end time
