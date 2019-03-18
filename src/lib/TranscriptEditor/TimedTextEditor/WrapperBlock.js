@@ -4,12 +4,14 @@ import { EditorBlock, Modifier, EditorState, SelectionState } from 'draft-js';
 import SpeakerLabel from './SpeakerLabel';
 import Word from './Word';
 import { shortTimecode, secondsToTimecode, timecodeToSeconds } from '../../Util/timecode-converter/';
+import { convertToArabicNumbers } from '../../Util/khmer-numbers/';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarker } from '@fortawesome/free-solid-svg-icons';
 
 import style from './WrapperBlock.module.css';
 import { Map, List, fromJS } from 'immutable'
 
+window.convertToArabicNumbers = convertToArabicNumbers
 class WrapperBlock extends React.Component {
   constructor(props) {
     super(props);
@@ -91,6 +93,7 @@ class WrapperBlock extends React.Component {
     return parseFloat(nextBlockStart)
   }
 
+  // changes the timeblock's timing
   handleTimecodeClick = () => {
     let wasPlaying = this.props.blockProps.isPlaying();
     this.props.blockProps.togglePlayMedia(false);
@@ -102,6 +105,10 @@ class WrapperBlock extends React.Component {
       let newStartTime = prompt(`Edit Time - hh:mm:ss:ff hh:mm:ss mm:ss m:ss m.ss seconds (originally at ${ currentBlockTime })`, currentVideoTime);
 
       if (newStartTime !== '' && newStartTime !== null) {
+        // in case of khmer numbers getting thrown in there
+        newStartTime = convertToArabicNumbers(newStartTime)
+        console.log(newStartTime, "is converted time")
+
         if (newStartTime.includes(':')) {
           newStartTime = timecodeToSeconds(newStartTime)
         }
@@ -222,8 +229,8 @@ class WrapperBlock extends React.Component {
     return (
       <div className={ style.WrapperBlock }>
         <div className={ style.markers }>
-          <FontAwesomeIcon icon={ faMapMarker } onMouseDown={ this.handleJumpToHereClick } className= { style.jumpToHere }/>
           {blockProps.showSpeakers ? speakerElement : ''}
+          <FontAwesomeIcon icon={ faMapMarker } onMouseDown={ this.handleJumpToHereClick } className= { style.jumpToHere }/>
           {blockProps.showTimecodes ? timecodeElement : ''}
         </div>
         <div className={ style.text }>

@@ -11,6 +11,7 @@ import styles from './index.module.css';
 
 import { secondsToTimecode, timecodeToSeconds } from '../../Util/timecode-converter/index';
 import { timingSafeEqual } from 'crypto';
+import { convertToArabicNumbers } from '../../Util/khmer-numbers/';
 
 const PLAYBACK_RATES = [
   //  { value: 0.2, label: '0.2' },
@@ -110,6 +111,8 @@ class MediaPlayer extends React.Component {
     }
     // user clicks cancel to prompt, prompt returns null
     if (userTimecodeValue !== null) {
+      userTimecodeValue = convertToArabicNumbers(userTimecodeValue)
+
       if (userTimecodeValue.includes(':')) {
         userTimecodeValue = timecodeToSeconds(userTimecodeValue);
       }
