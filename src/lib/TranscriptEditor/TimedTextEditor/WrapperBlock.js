@@ -103,7 +103,6 @@ class WrapperBlock extends React.Component {
       const currentBlockTime = secondsToTimecode(this.props.block.getData().get('start'));
       // TODO not accurate; bad practice, but fastest quick fix would be to use js to just grab the element of the video player and grab the text 
       const currentVideoTime = secondsToTimecode(this.props.blockProps.currentTime);
-      console.log("current video time", currentVideoTime)
       let newStartTime = prompt(`Edit Time - hh:mm:ss:ff hh:mm:ss mm:ss m:ss m.ss seconds (originally at ${ currentBlockTime })`, currentVideoTime);
 
       if (newStartTime !== '' && newStartTime !== null && parseInt(newStartTime) !== NaN) {
@@ -114,11 +113,9 @@ class WrapperBlock extends React.Component {
           newStartTime = timecodeToSeconds(newStartTime)
         }
         newStartTime = parseFloat(newStartTime)
-        console.log(newStartTime, "is converted time")
 
         // make them put in new time or just cancel if start time is after end time
         let endTime = this.getEndTime()
-        console.log("endTime", endTime)
         if (!isNaN(newStartTime) && !isNaN(endTime) && newStartTime >= endTime) {
           alert("Start Time must be before next block's start time")
 
@@ -144,10 +141,11 @@ class WrapperBlock extends React.Component {
 
         let wordsData = this.props.block.getData().get('words') || [ {} ] // really should just break...being too flexible here...
         // if (!List.isList(wordsData) || !Map.isMap(wordsData)) {
-        if (!Map.isMap(wordsData)) {
-          wordsData = fromJS(wordsData)
+        if (Map.isMap(wordsData)) {
+          wordsData = wordsData.toJSON()
         }
-        wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
+        // wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
+        wordsData[0].start = newStartTime
 
         const newBlockData = {
           start: newStartTime,
@@ -175,10 +173,14 @@ class WrapperBlock extends React.Component {
           let prevWordsData = previousBlock.getData().get('words') || [ {} ]// really should just break...being too flexible here...
           // draft js will turn into immutable anyways, so might as well beat them to the punch
           // if (!List.isList(prevWordsData) || !Map.isMap(prevWordsData)) {
-          if (!Map.isMap(prevWordsData)) {
-            prevWordsData = fromJS(prevWordsData)
+          if (List.isList(prevWordsData)) {
+            prevWordsData = prevWordsData.toJSON()
           }
-          prevWordsData = prevWordsData.setIn([ 0, 'end' ], newStartTime)
+          if (Map.isMap(prevWordsData[0])) {
+            prevWordsData[0] = prevWordsData[0].toJSON()
+          }
+          // prevWordsData = prevWordsData.setIn([ 0, 'end' ], newStartTime)
+          prevWordsData[0].end = newStartTime
 
           const newPrevBlockData = {
             words: prevWordsData,

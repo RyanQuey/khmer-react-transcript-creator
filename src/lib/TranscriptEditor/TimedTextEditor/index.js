@@ -539,14 +539,16 @@ class TimedTextEditor extends React.Component {
       // TODO since ran so many times, consider slightly faster loop (reg for loop?)
       for (var i = 0; i < blockMap.length; i++) {
         const block = blockMap[i] || {};
-        let word = ((block.data || {}).words || [])[0] || {};
+        let word = ((block.data || {}).words || [])
+        
         // TODO happens if we split a paragraph...need a better more consistent system for this...
         if (List.isList(word)) {
           word = word.toJSON()[0] || {};
-          console.log("was a list, is now", word)
+        } else {
+          word = word[0] || {}
         }
         if (word.end === undefined || word.end === undefined) {
-          console.log("this word is broken...", word)
+          console.log("this word is broken...", word, block)
         }
 
         if (word.start <= this.props.currentTime && word.end >= this.props.currentTime) {
@@ -575,8 +577,8 @@ class TimedTextEditor extends React.Component {
     }
     if (this.state.transcriptData && currentWord.start === "NA") {
       // there's a bug in the code!
-      console.log("What is going wrong with the blocks?", blockMap, currentWord);
-      console.log("for the time:", this.props.currentTime);
+      // console.log("What is going wrong with the blocks?", blockMap, "currentWord", currentWord);
+      // console.log("for the time:", this.props.currentTime);
     }
 
     return currentWord;
