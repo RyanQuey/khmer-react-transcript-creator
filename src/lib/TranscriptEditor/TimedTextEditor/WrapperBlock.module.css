@@ -3,23 +3,25 @@
 .WrapperBlock {
   height: 100%;
   width: 100%;
-  margin-bottom: 1em;
+  margin-bottom: .5em;
   line-height: 2.4em;/* bigger for Khmer */
   overflow: hidden;
+  display: flex;
 }
 
 .markers {
-  width: 25%;
+  max-width: 25%;
   font-size: 1em;
   float: left;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  padding: 0 1em;
 }
 
 .text {
   width: 75%;
-  font-size: 1.2em;
+  font-size: 1.4em;
   float: right;
   clear: right;
   line-height: 2.4em;/* bigger for Khmer */
@@ -27,13 +29,11 @@
 
 .speaker {
   display: inline-block;
-  width: 50%;
-  padding-right: 2em;
   vertical-align: middle;
   color: color-mid-grey;
   font-weight: bold;
   text-transform: uppercase;
-  text-align: right;
+  text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -41,13 +41,10 @@
 
 .time {
   display: inline-block;
-  width: 30%;
   font-weight: lighter;
   vertical-align: middle;
   cursor: pointer;
-  /* float: right; */ 
   line-height: 2.4em;
-  margin-right: 0.5em;
 }
 
 .EditLabel {
@@ -57,5 +54,5 @@
 
 .jumpToHere {
   cursor: pointer;
-  margin: 5px 10px;
+  margin: auto 10px;
 }
