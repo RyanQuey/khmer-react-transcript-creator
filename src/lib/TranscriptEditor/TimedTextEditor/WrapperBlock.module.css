@@ -10,7 +10,7 @@
 
 .markers {
   width: 25%;
-  font-size: 0.8em;
+  font-size: 1em;
   float: left;
   display: flex;
   align-items: center;
@@ -19,7 +19,7 @@
 
 .text {
   width: 75%;
-  font-size: 1em;
+  font-size: 1.2em;
   float: right;
   clear: right;
   line-height: 2.4em;/* bigger for Khmer */
@@ -53,4 +53,8 @@
 .EditLabel {
   cursor: pointer;
   margin-right: 0.5em;
+}
+
+.jumpToHere {
+  cursor: pointer;
 }

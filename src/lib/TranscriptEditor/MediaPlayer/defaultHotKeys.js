@@ -32,7 +32,7 @@ function returnHotKeys(self) {
       displayKeyCombination: 'alt + l',
       label: 'Fast Forward',
     },
-    'alt+j': {
+    /*'alt+j': {
       priority: 1,
       handler: () => {
         self.skipBackward();
@@ -47,7 +47,7 @@ function returnHotKeys(self) {
       },
       displayKeyCombination: 'alt + j',
       label: 'Rewind',
-    },
+    },*/
     'alt+-': {
       priority: 1,
       handler: () => {
@@ -81,20 +81,53 @@ function returnHotKeys(self) {
       displayKeyCombination: 'alt + +',
       label: 'Increase Playback Speed',
     },
-    'alt+r': {
+    'alt+u': {
+      priority: 1,
+      handler: () => {
+        self.jumpToStartOfBlock();
+
+        self.props.handleAnalyticsEvents({
+          category: 'defaultHotKeys',
+          action: 'alt+u',
+          name: 'jumpToStartOfBlock',
+          value: 'na'
+        });
+
+      },
+      displayKeyCombination: 'alt + u',
+      label: 'Jump to Start of Current Section',
+    },
+    /*
+    'alt+h': {
+      priority: 1,
+      handler: () => {
+        self.editCurrentBlockTime();
+
+        self.props.handleAnalyticsEvents({
+          category: 'defaultHotKeys',
+          action: 'alt+h',
+          name: 'editCurrentBlockTime',
+          value: 'na'
+        });
+
+      },
+      displayKeyCombination: 'alt + h',
+      label: 'Edit Current Section Time',
+    },*/
+    'alt+j': {
       priority: 1,
       handler: () => {
         self.rollBack();
 
         self.props.handleAnalyticsEvents({
           category: 'defaultHotKeys',
-          action: 'alt+r',
+          action: 'alt+j',
           name: 'rollBack',
           value: 'na'
         });
 
       },
-      displayKeyCombination: 'alt + r',
+      displayKeyCombination: 'alt + j',
       label: 'Roll Back',
     },
     'alt+t': {

@@ -155,8 +155,6 @@ class TimedTextEditor extends React.Component {
   loadData() {
     if (this.props.transcriptData !== null) {
       const blocks = sttJsonAdapter(this.props.transcriptData, this.props.sttJsonType);
-      console.log("transcript data and json type", this.props.transcriptData, this.props.sttJsonType)
-      console.log("blocks", blocks.blocks)
       if (blocks.blocks.length === 0) {
         console.error("No Blocks returned!")
         alert("No Blocks returned!")
@@ -514,12 +512,18 @@ class TimedTextEditor extends React.Component {
         updateTimecode: this.updateTimecode,
         togglePlayMedia: this.props.playMedia,
         isPlaying: this.props.isPlaying,
+        currentTime: this.props.currentTime,
       }
     };
   }
 
-  getCurrentWord = () => {
+  getCurrentWord = (checkToScroll = true) => {
     const currentWord = {
+      start: 'NA',
+      end: 'NA'
+    };
+
+    const nextWord = {
       start: 'NA',
       end: 'NA'
     };
@@ -531,8 +535,8 @@ class TimedTextEditor extends React.Component {
       const blockMap = contentStateConvertEdToRaw.blocks;
 
       // TODO since ran so many times, consider slightly faster loop (reg for loop?)
-      for (var blockKey in blockMap) {
-        const block = blockMap[blockKey] || {};
+      for (var i = 0; i < blockMap.length; i++) {
+        const block = blockMap[i] || {};
         let word = ((block.data || {}).words || [])[0] || {};
         // TODO happens if we split a paragraph...need a better more consistent system for this...
         if (List.isList(word)) {
@@ -542,14 +546,24 @@ class TimedTextEditor extends React.Component {
         if (word.start <= this.props.currentTime && word.end >= this.props.currentTime) {
           currentWord.start = word.start;
           currentWord.end = word.end;
+
+          const nextBlock = blockMap[i + 2] || blockMap[i + 1]
+          const next = ((nextBlock.data || {}).words || [])[0] || {};
+          if (next) {
+            // won't be a next for last word in transcript
+            nextWord.start = next.start;
+            nextWord.end = next.end;
+          }
+          break
         }
       }
     }
 
-    if (currentWord.start !== 'NA') {
+    if (checkToScroll && currentWord.start !== 'NA') {
       if (this.props.isScrollIntoViewOn) {
-        const currentWordElement = document.querySelector(`.Word[data-start="${ currentWord.start }"]`);
-        currentWordElement.scrollIntoView({ block: 'nearest', inline: 'center' });
+        const nextWordElement = document.querySelector(`.Word[data-start="${ nextWord.start }"]`);
+        // there should always be currentWordElement, but just in case...
+        nextWordElement && nextWordElement.scrollIntoView({ block: 'nearest', inline: 'center' });
       }
     }
 
@@ -576,7 +590,7 @@ class TimedTextEditor extends React.Component {
       How does this work?
     </Tooltip>;
 
-    const currentWord = this.getCurrentWord();
+    const currentWord = this.getCurrentWord(true); // true, so scrolls if setting says to
     const highlightColour = '#c0def3';
     const unplayedColor = '#767676';
     const correctionBorder = '1px dotted blue';

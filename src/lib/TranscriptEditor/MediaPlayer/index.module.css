@@ -11,9 +11,10 @@
 }
 
 video {
-  width: 30%;
-  max-height: 160px;
+  width: 35%;
+  max-height: 300px;
   cursor: pointer;
+  margin-left: 10px;
 }
 
 .controlsSection {

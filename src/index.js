@@ -8,7 +8,15 @@ import style from './index.module.css';
 import SttTypeSelect from './select-stt-json-type';
 import ExportFormatSelect from './select-export-format';
 
+import hunSenInterviewPart1Transcript from './sample-data/Hun-Sen-interview-part1-transcript-data.json';
+
 const tedTalkVideoUrl = 'https://download.ted.com/talks/KateDarling_2018S-950k.mp4';
+const hunSenInterview1Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/4/43/43e10b36-b843-4fea-9a66-1160373adede.mp4?download=1';
+const hunSenInterview1Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/4/43/43e10b36-b843-4fea-9a66-1160373adede_mobile.mp4?download=1';
+const hunSenInterview2Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/8/85/85b38eb5-a8cc-4ef9-827c-eab331e7f5a2.mp4?download=1';
+const hunSenInterview2Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/8/85/85b38eb5-a8cc-4ef9-827c-eab331e7f5a2_mobile.mp4?download=1';
+const hunSenInterview3Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/a/af/af67500f-9491-47f6-8e26-1c6f7a3827d6.mp4?download=1';
+const hunSenInterview3Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/a/af/af67500f-9491-47f6-8e26-1c6f7a3827d6_mobile.mp4?download=1';
 
 class App extends React.Component {
   constructor(props) {
@@ -29,9 +37,10 @@ class App extends React.Component {
 
   loadDemo() {
     this.setState({
-      transcriptData: kaldiTedTalkTranscript,
-      mediaUrl: tedTalkVideoUrl,
+      transcriptData: hunSenInterviewPart1Transcript,
+      mediaUrl: hunSenInterview1Url360px,
       sttType: 'bbckaldi',
+      fileName: 'Hun Sen interview part1 transcript data',
     });
   }
 

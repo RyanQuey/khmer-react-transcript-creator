@@ -20,11 +20,11 @@ class TranscriptEditor extends React.Component {
       currentTime: 0,
       lastLocalSavedTime: '',
       transcriptData: null,
-      isScrollIntoViewOn: false,
+      isScrollIntoViewOn: true,
       showSettings: false,
       showShortcuts: false,
       isPauseWhileTypingOn: true,
-      rollBackValueInSeconds: 15,
+      rollBackValueInSeconds: 5,
       timecodeOffset: 0,
       showTimecodes: true,
       showSpeakers: true
@@ -260,6 +260,7 @@ class TranscriptEditor extends React.Component {
       handleAnalyticsEvents={ this.props.handleAnalyticsEvents }
       handleSaveTranscript={ this.handleSaveTranscript }
       playingWhileListening = { this.props.playingWhileListening }
+      timedTextEditorRef = { this.timedTextEditorRef.current }
     />;
 
     const settings = <Settings

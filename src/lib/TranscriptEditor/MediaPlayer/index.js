@@ -13,7 +13,7 @@ import { secondsToTimecode, timecodeToSeconds } from '../../Util/timecode-conver
 import { timingSafeEqual } from 'crypto';
 
 const PLAYBACK_RATES = [
-  { value: 0.2, label: '0.2' },
+  //  { value: 0.2, label: '0.2' },
   { value: 0.25, label: '0.25' },
   { value: 0.5, label: '0.5' },
   { value: 0.75, label: '0.75' },
@@ -21,10 +21,10 @@ const PLAYBACK_RATES = [
   { value: 1.25, label: '1.25' },
   { value: 1.5, label: '1.5' },
   { value: 1.75, label: '1.75' },
-  { value: 2, label: '2' },
-  { value: 2.5, label: '2.5' },
-  { value: 3, label: '3' },
-  { value: 3.5, label: '3.5' }
+  // { value: 2, label: '2' },
+  // { value: 2.5, label: '2.5' },
+  // { value: 3, label: '3' },
+  // { value: 3.5, label: '3.5' }
 ];
 
 class MediaPlayer extends React.Component {
@@ -39,7 +39,7 @@ class MediaPlayer extends React.Component {
       hotKeys: returnHotKeys(this),
       isPlaying: false,
       playbackRateOptions: PLAYBACK_RATES,
-      mediaDuration: '00:00:00:00'
+      mediaDuration: '00:00:00:00',
     };
   }
   /*eslint-disable camelcase */
@@ -56,7 +56,7 @@ class MediaPlayer extends React.Component {
 
       return {
         timecodeOffset: newCurrentTimeInSeconds,
-        rollBackValueInSeconds: nextProps.rollBackValueInSeconds
+        rollBackValueInSeconds: nextProps.rollBackValueInSeconds,
       };
     }
 
@@ -161,6 +161,47 @@ class MediaPlayer extends React.Component {
 
     }
   }
+
+  jumpToStartOfBlock = () => {
+    // NOTE this is so bad...so messy. Oh well
+    const currentWord = this.props.timedTextEditorRef.getCurrentWord()
+    if (this.videoRef.current !== null) {
+
+      if (this.props.handleAnalyticsEvents !== undefined) {
+        this.props.handleAnalyticsEvents({
+          category: 'MediaPlayer',
+          action: 'jumpToStartOfBlock',
+          name: 'jumpToStartOfBlock',
+          value: currentWord.start
+        });
+      }
+      // some blocks don't have start time set due to data getting messed up, so just rollback
+      currentWord.start ? this.setCurrentTime(currentWord.start) : this.rollback()
+
+    }
+  }
+
+    /*  TODO use refs on all blocks to access the WrapperBlock react child, and then call the edit block time func
+  editCurrentBlockTime = () => {
+    // NOTE this is so bad...so messy. Oh well
+    console.log(this.props.timedTextEditorRef)
+    const currentWord = this.props.timedTextEditorRef.getCurrentWord()
+    if (this.videoRef.current !== null) {
+
+      if (this.props.handleAnalyticsEvents !== undefined) {
+        this.props.handleAnalyticsEvents({
+          category: 'MediaPlayer',
+          action: 'editCurrentBlockTime',
+          name: 'editCurrentBlockTime',
+          value: currentWord.start
+        });
+      }
+      // some blocks don't have start time set due to data getting messed up, so just rollback
+      currentWord.start ? this.setCurrentTime(currentWord.start) : this.rollback()
+
+    }
+  }
+  */
 
   handleTimeUpdate = (e) => {
     this.props.hookOnTimeUpdate(e.target.currentTime);
@@ -342,8 +383,9 @@ class MediaPlayer extends React.Component {
 
   onLoadedDataGetDuration = (e) => {
     const currentDuration = e.target.duration;
-    const currentDurationWithOffset = currentDuration+ this.state.timecodeOffset;
-    const durationInSeconds = secondsToTimecode( currentDuration+ currentDurationWithOffset);
+    const currentDurationWithOffset = currentDuration + this.state.timecodeOffset;
+
+    const durationInSeconds = secondsToTimecode(currentDurationWithOffset);
 
     this.setState({
       mediaDuration: durationInSeconds

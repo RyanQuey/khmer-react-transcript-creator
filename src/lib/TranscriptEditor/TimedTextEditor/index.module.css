@@ -9,11 +9,12 @@ Giving the editor a oveflow
 https://github.com/facebook/draft-js/issues/528
 */
 .editor :global(.public-DraftEditor-content) {
-  max-height: 75vh;
+  box-sizing: border-box;
+  max-height: calc(100vh - 315px); /* 21px for question bar directly above, ___ for for the plyaer, and 2em for the header above player*/
   overflow: auto;
   background-color: white;
   padding: 20px;
-  width: 80%;
+  width: 95%;
   margin: 0 auto;
 }
 
