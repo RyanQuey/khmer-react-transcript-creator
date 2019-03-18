@@ -80,13 +80,15 @@ class MediaPlayer extends React.Component {
     if (newCurrentTime !== '' && newCurrentTime !== null) {
     // hh:mm:ss:ff - mm:ss - m:ss - ss - seconds number or string and hh:mm:ss
       const newCurrentTimeInSeconds = timecodeToSeconds(newCurrentTime);
-      if (this.videoRef.current !== null) {
+      if (this.videoRef.current !== null && !isNaN(newCurrentTimeInSeconds)) {
         const videoRef = this.videoRef.current;
 
         if (videoRef.readyState === 4) {
           videoRef.currentTime = newCurrentTimeInSeconds;
           this.playMedia();
         }
+      } else {
+        console.log(newCurrentTimeInSeconds, newCurrentTime)
       }
     }
   }

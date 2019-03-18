@@ -517,6 +517,7 @@ class TimedTextEditor extends React.Component {
     };
   }
 
+  // TODO just do 2 js calls, one to scroll, the other to get current word. Much neater
   getCurrentWord = (checkToScroll = true) => {
     const currentWord = {
       start: 'NA',
@@ -528,11 +529,12 @@ class TimedTextEditor extends React.Component {
       end: 'NA'
     };
 
+    let blockMap
     if (this.state.transcriptData) {
       const contentState = this.state.editorState.getCurrentContent();
       // TODO: using convertToRaw here might be slowing down performance(?)
       const contentStateConvertEdToRaw = convertToRaw(contentState);
-      const blockMap = contentStateConvertEdToRaw.blocks;
+      blockMap = contentStateConvertEdToRaw.blocks;
 
       // TODO since ran so many times, consider slightly faster loop (reg for loop?)
       for (var i = 0; i < blockMap.length; i++) {
@@ -540,7 +542,11 @@ class TimedTextEditor extends React.Component {
         let word = ((block.data || {}).words || [])[0] || {};
         // TODO happens if we split a paragraph...need a better more consistent system for this...
         if (List.isList(word)) {
-          word = word.toJSON()
+          word = word.toJSON()[0] || {};
+          console.log("was a list, is now", word)
+        }
+        if (word.end === undefined || word.end === undefined) {
+          console.log("this word is broken...", word)
         }
 
         if (word.start <= this.props.currentTime && word.end >= this.props.currentTime) {
@@ -556,6 +562,7 @@ class TimedTextEditor extends React.Component {
           }
           break
         }
+
       }
     }
 
@@ -565,6 +572,11 @@ class TimedTextEditor extends React.Component {
         // there should always be currentWordElement, but just in case...
         nextWordElement && nextWordElement.scrollIntoView({ block: 'nearest', inline: 'center' });
       }
+    }
+    if (this.state.transcriptData && currentWord.start === "NA") {
+      // there's a bug in the code!
+      console.log("What is going wrong with the blocks?", blockMap, currentWord);
+      console.log("for the time:", this.props.currentTime);
     }
 
     return currentWord;

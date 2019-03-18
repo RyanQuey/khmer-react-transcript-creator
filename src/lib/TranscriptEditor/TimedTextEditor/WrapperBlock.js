@@ -101,25 +101,29 @@ class WrapperBlock extends React.Component {
     // does the whole thing after making sure it's really paused
     const doIt = () => {
       const currentBlockTime = secondsToTimecode(this.props.block.getData().get('start'));
+      // TODO not accurate; bad practice, but fastest quick fix would be to use js to just grab the element of the video player and grab the text 
       const currentVideoTime = secondsToTimecode(this.props.blockProps.currentTime);
+      console.log("current video time", currentVideoTime)
       let newStartTime = prompt(`Edit Time - hh:mm:ss:ff hh:mm:ss mm:ss m:ss m.ss seconds (originally at ${ currentBlockTime })`, currentVideoTime);
 
-      if (newStartTime !== '' && newStartTime !== null) {
+      if (newStartTime !== '' && newStartTime !== null && parseInt(newStartTime) !== NaN) {
         // in case of khmer numbers getting thrown in there
         newStartTime = convertToArabicNumbers(newStartTime)
-        console.log(newStartTime, "is converted time")
 
         if (newStartTime.includes(':')) {
           newStartTime = timecodeToSeconds(newStartTime)
         }
         newStartTime = parseFloat(newStartTime)
+        console.log(newStartTime, "is converted time")
 
         // make them put in new time or just cancel if start time is after end time
-        if (newStartTime >= this.getEndTime()) {
+        let endTime = this.getEndTime()
+        console.log("endTime", endTime)
+        if (!isNaN(newStartTime) && !isNaN(endTime) && newStartTime >= endTime) {
           alert("Start Time must be before next block's start time")
 
           return
-        } else if (newStartTime <= this.getPrevStartTime()) {
+        } else if (!isNaN(newStartTime) && !isNaN(endTime) && newStartTime <= this.getPrevStartTime()) {
           alert("Start Time must be after previous block's start time")
 
           return
@@ -189,6 +193,8 @@ class WrapperBlock extends React.Component {
 
           this.props.blockProps.setEditorNewContentState(newPrevBlockContentState);
         }
+      } else {
+        console.error("What went wrong setting timeblock time?", newStartTime)
       }
       if (wasPlaying) {
         this.props.blockProps.togglePlayMedia(true)
