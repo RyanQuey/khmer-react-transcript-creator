@@ -110,7 +110,6 @@ class TranscriptEditor extends React.Component {
 
       return
     }
-    console.log(startTime);
     this.setCurrentTime(startTime);
   }
 

@@ -88,7 +88,7 @@ class MediaPlayer extends React.Component {
           this.playMedia();
         }
       } else {
-        console.log(newCurrentTimeInSeconds, newCurrentTime)
+        console.log("failed to jump to time:", newCurrentTimeInSeconds, newCurrentTime)
       }
     }
   }

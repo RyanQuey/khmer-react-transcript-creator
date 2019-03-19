@@ -126,7 +126,6 @@ class WrapperBlock extends React.Component {
           return
         }
 
-
         this.setState({ start: newStartTime });
 
         // Get key of the currentBlock
@@ -139,13 +138,15 @@ class WrapperBlock extends React.Component {
 
         const currentBlockSelectionState = editorStateWithSelectedCurrentBlock.getSelection();
 
-        let wordsData = this.props.block.getData().get('words') || [ {} ] // really should just break...being too flexible here...
+        let wordsData = this.props.block.getData().get('words') || [ {} ]; // really should just break...being too flexible here...
         // if (!List.isList(wordsData) || !Map.isMap(wordsData)) {
         if (Map.isMap(wordsData)) {
-          wordsData = wordsData.toJSON()
+          console.log("words data was a map");
+          wordsData = wordsData.toJSON();
         }
         // wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
-        wordsData[0].start = newStartTime
+        console.log("words data", wordsData);
+        wordsData[0].start = newStartTime;
 
         const newBlockData = {
           start: newStartTime,
