@@ -96,6 +96,7 @@ class TimedTextEditor extends React.Component {
         if (this.props.isPlaying()) {
           this.props.playMedia(false);
           // Pause video for X seconds
+          /*  NOTE trying it without auto-resume, for better control and maybe less clunky UI
           const pauseWhileTypingIntervalInMilliseconds = 4*1000;
           // resets timeout
           clearTimeout(this.pauseWhileTypingTimeOut);
@@ -103,6 +104,7 @@ class TimedTextEditor extends React.Component {
             // after timeout starts playing again
             this.props.playMedia(true);
           }.bind(this), pauseWhileTypingIntervalInMilliseconds);
+          */ 
         }
       }
 

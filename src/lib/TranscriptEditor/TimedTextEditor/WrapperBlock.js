@@ -146,6 +146,7 @@ class WrapperBlock extends React.Component {
         }
         // wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
         console.log("words data", wordsData);
+        console.log("block", this.props.block);
         wordsData[0].start = newStartTime;
 
         const newBlockData = {
