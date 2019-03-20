@@ -652,7 +652,7 @@ class TimedTextEditor extends React.Component {
     return (
       <section>
         { tooltip }
-        <FontAwesomeIcon icon={ faShareSquare } onClick = { this.copyCurrentTimeToClipboard } style={ { cursor: 'pointer' } }/>
+        <span onClick = { this.copyCurrentTimeToClipboard } style={ { cursor: 'pointer' } }><FontAwesomeIcon icon={ faShareSquare } title="Share Current Time"/>&nbsp;Share Current Time</span>
         { this.props.transcriptData !== null ? editor : null }
       </section>
     );

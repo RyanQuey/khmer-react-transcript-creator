@@ -87,8 +87,9 @@ class GenerateTranscript extends Component {
         <button onClick = { this.reset } >Reset</button>
         <button onClick = { this.start } >Start</button>
         <button onClick = { this.stop } >Stop</button>
+        <br />
         <button onClick = { this.generateJSON } >Generate Transcript JSON</button>
-        <div className="transcript-container" style={ { height: '240px', overflowY: 'auto' } }>
+        <div className="transcript-container" style={ { maxHeight: '240px', overflowY: 'auto' } }>
           {
             <div>{transcript}</div>
           }

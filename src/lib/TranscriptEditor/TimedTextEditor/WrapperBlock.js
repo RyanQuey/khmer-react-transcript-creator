@@ -235,13 +235,13 @@ class WrapperBlock extends React.Component {
       handleOnClickEdit={ this.handleOnClickEdit }
     />;
 
-    const timecodeElement = <span className={ style.time } onClick={ this.handleTimecodeClick }>{shortTimecode(startTimecode)}</span>;
+    const timecodeElement = <span className={ style.time } onClick={ this.handleTimecodeClick } title="Edit Timecode for this block of speech">{shortTimecode(startTimecode)}</span>;
 
     return (
       <div className={ style.WrapperBlock }>
         <div className={ style.markers }>
           {blockProps.showSpeakers ? speakerElement : ''}
-          <FontAwesomeIcon icon={ faMapMarker } onMouseDown={ this.handleJumpToHereClick } className= { style.jumpToHere }/>
+          <FontAwesomeIcon icon={ faMapMarker } onMouseDown={ this.handleJumpToHereClick } className= { style.jumpToHere } title="Jump to this time" />
           {blockProps.showTimecodes ? timecodeElement : ''}
         </div>
         <div className={ style.text }>
