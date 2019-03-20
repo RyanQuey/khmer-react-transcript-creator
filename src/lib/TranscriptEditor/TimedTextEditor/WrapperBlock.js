@@ -140,8 +140,8 @@ class WrapperBlock extends React.Component {
 
         let wordsData = this.props.block.getData().get('words') || [ {} ]; // really should just break...being too flexible here...
         // if (!List.isList(wordsData) || !Map.isMap(wordsData)) {
-        if (Map.isMap(wordsData)) {
-          console.log("words data was a map");
+        if (List.isList(wordsData)) {
+          console.log("words data was a list");
           wordsData = wordsData.toJSON();
         }
         // wordsData = wordsData.setIn([ 0, 'start' ], newStartTime)
