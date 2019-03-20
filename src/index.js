@@ -236,12 +236,14 @@ class App extends React.Component {
          />
          <hr/>
 
-         <label>Components Analytics</label>
-         <textarea
-           style={ { height: '200px', width: '100%' } }
-           value={ JSON.stringify(this.state.analyticsEvents, null, 2) }
-           disabled>
-         </textarea>
+         { false && "TODO not worrying about right now" && <div>
+           <label>Components Analytics</label>
+           <textarea
+             style={ { height: '200px', width: '100%' } }
+             value={ JSON.stringify(this.state.analyticsEvents, null, 2) }
+             disabled>
+           </textarea>
+         </div> }
        </div>
      );
    }

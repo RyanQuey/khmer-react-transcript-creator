@@ -10,7 +10,8 @@ https://github.com/facebook/draft-js/issues/528
 */
 .editor :global(.public-DraftEditor-content) {
   box-sizing: border-box;
-  max-height: calc(100vh - 315px); /* 21px for question bar directly above, ___ for for the plyaer, and 2em for the header above player*/
+  height: calc(100vh - 393px); /* 21px for question bar directly above, 300px for video (max), 40 for time bar, and 2em (=32px) for the header above player*/
+  min-height: 350px; 
   overflow: auto;
   background-color: white;
   padding: 20px;

@@ -572,8 +572,10 @@ class TimedTextEditor extends React.Component {
 
     if (checkToScroll && currentWord.start !== 'NA') {
       if (this.props.isScrollIntoViewOn) {
+        const thisWordElement = document.querySelector(`.Word[data-start="${ currentWord.start }"]`);
         const nextWordElement = document.querySelector(`.Word[data-start="${ nextWord.start }"]`);
         // there should always be currentWordElement, but just in case...
+        thisWordElement && thisWordElement.scrollIntoView({ block: 'nearest', inline: 'center' });
         nextWordElement && nextWordElement.scrollIntoView({ block: 'nearest', inline: 'center' });
       }
     }
