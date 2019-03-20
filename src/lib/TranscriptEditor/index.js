@@ -12,12 +12,20 @@ import { secondsToTimecode } from '../Util/timecode-converter/index';
 
 import style from './index.module.css';
 
+const urlParams = new URLSearchParams(window.location.search);
+
 class TranscriptEditor extends React.Component {
   constructor(props) {
     super(props);
 
+    let startTime = urlParams.has('startTime') ? parseFloat(urlParams.get('startTime')) : 0;
+    if (isNaN(startTime)) {
+      startTime = 0
+    }
+
     this.state = {
-      currentTime: 0,
+      defaultStartTime: startTime,
+      currentTime: startTime,
       lastLocalSavedTime: '',
       transcriptData: null,
       isScrollIntoViewOn: true,
@@ -260,6 +268,7 @@ class TranscriptEditor extends React.Component {
       handleSaveTranscript={ this.handleSaveTranscript }
       playingWhileListening = { this.props.playingWhileListening }
       timedTextEditorRef = { this.timedTextEditorRef.current }
+      defaultStartTime = { this.state.defaultStartTime } 
     />;
 
     const settings = <Settings

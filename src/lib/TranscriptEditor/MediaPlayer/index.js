@@ -386,6 +386,7 @@ class MediaPlayer extends React.Component {
     }
   }
 
+  // also now sets default start Time
   onLoadedDataGetDuration = (e) => {
     const currentDuration = e.target.duration;
     const currentDurationWithOffset = currentDuration + this.state.timecodeOffset;
@@ -405,6 +406,7 @@ class MediaPlayer extends React.Component {
       });
     }
 
+    this.setCurrentTime(this.props.defaultStartTime)
   }
 
   handlePictureInPicture = () => {

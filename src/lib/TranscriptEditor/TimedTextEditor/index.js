@@ -4,7 +4,7 @@ import Tooltip from 'react-simple-tooltip';
 import { Map, List, fromJS } from 'immutable'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle, faMousePointer, faICursor, faUserEdit, faKeyboard, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faMousePointer, faICursor, faUserEdit, faKeyboard, faSave, faShareSquare } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Editor,
@@ -519,6 +519,15 @@ class TimedTextEditor extends React.Component {
     };
   }
 
+  copyCurrentTimeToClipboard = () => {
+    const text = `https://ryanquey.github.io/khmer-react-transcript-editor?startTime=${ this.props.currentTime }`
+    navigator.clipboard.writeText(text).then(function() {
+      console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+      console.error('Async: Could not copy text: ', err);
+    });
+  }
+
   // TODO just do 2 js calls, one to scroll, the other to get current word. Much neater
   getCurrentWord = (checkToScroll = true) => {
     const currentWord = {
@@ -643,6 +652,7 @@ class TimedTextEditor extends React.Component {
     return (
       <section>
         { tooltip }
+        <FontAwesomeIcon icon={ faShareSquare } onClick = { this.copyCurrentTimeToClipboard } style={ { cursor: 'pointer' } }/>
         { this.props.transcriptData !== null ? editor : null }
       </section>
     );

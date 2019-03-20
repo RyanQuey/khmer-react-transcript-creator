@@ -178,6 +178,7 @@ class WrapperBlock extends React.Component {
           if (List.isList(prevWordsData)) {
             prevWordsData = prevWordsData.toJSON()
           }
+          // This part might not be necessary if the previous thing works right. TODO  but better safe than sorry in the meantime, minor performance issue
           if (Map.isMap(prevWordsData[0])) {
             prevWordsData[0] = prevWordsData[0].toJSON()
           }
