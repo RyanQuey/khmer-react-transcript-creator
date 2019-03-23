@@ -91,7 +91,7 @@ class TranscriptEditor extends React.Component {
 
   // eslint-disable-next-line class-methods-use-this
   // when double click a single word
-  handleWordClick = (startTime) => {
+    /* handleWordClick = (startTime) => {
     if (this.props.handleAnalyticsEvents !== undefined) {
       this.props.handleAnalyticsEvents({
         category: 'TranscriptEditor',
@@ -102,7 +102,7 @@ class TranscriptEditor extends React.Component {
     }
 
     this.jumpToHere(startTime)
-  }
+  }*/
 
   handleJumpToHereClick = (startTime) => {
     this.jumpToHere(startTime)
