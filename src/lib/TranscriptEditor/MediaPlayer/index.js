@@ -71,7 +71,8 @@ class MediaPlayer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.playingWhileListening && !prevProps.playingWhileListening && !this.state.isPlaying) {
+    if (this.props.playingWhileListening && !prevProps.playingWhileListening) {
+      this.setCurrentTime(0);
       this.playMedia()
     }
   }

@@ -4,19 +4,15 @@ import { render } from 'react-dom';
 import { TranscriptEditor, GenerateTranscript } from './lib';
 
 import kaldiTedTalkTranscript from './sample-data/KateDarling_2018S-bbc-kaldi.json';
+import khmerRougeTranscript from './sample-data/khmer-rouge-interview-data.json';
 import style from './index.module.css';
 import SttTypeSelect from './select-stt-json-type';
 import ExportFormatSelect from './select-export-format';
 
-import hunSenInterviewPart1Transcript from './sample-data/Hun-Sen-interview-part1-transcript-data.json';
+// import khmerRougeInterviewTranscript from './sample-data/khmer-rouge-interview-transcript-data.json';
 
 const tedTalkVideoUrl = 'https://download.ted.com/talks/KateDarling_2018S-950k.mp4';
-const hunSenInterview1Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/4/43/43e10b36-b843-4fea-9a66-1160373adede.mp4?download=1';
-const hunSenInterview1Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/4/43/43e10b36-b843-4fea-9a66-1160373adede_mobile.mp4?download=1';
-const hunSenInterview2Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/8/85/85b38eb5-a8cc-4ef9-827c-eab331e7f5a2.mp4?download=1';
-const hunSenInterview2Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/8/85/85b38eb5-a8cc-4ef9-827c-eab331e7f5a2_mobile.mp4?download=1';
-const hunSenInterview3Url360px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/a/af/af67500f-9491-47f6-8e26-1c6f7a3827d6.mp4?download=1';
-const hunSenInterview3Url270px = 'https://av.voanews.com/Videoroot/Pangeavideo/2018/09/a/af/af67500f-9491-47f6-8e26-1c6f7a3827d6_mobile.mp4?download=1';
+const khmerRougeInterviewTranscript = 'https://av.voanews.com/Videoroot/Pangeavideo/2019/01/b/b8/b83b37e5-3deb-4668-9daa-b2837648799f.mp4?download=1' // 360px (270, 720, and 1080 available)
 
 class App extends React.Component {
   constructor(props) {
@@ -37,10 +33,10 @@ class App extends React.Component {
 
   loadDemo() {
     this.setState({
-      transcriptData: hunSenInterviewPart1Transcript,
-      mediaUrl: hunSenInterview1Url360px,
+      transcriptData: khmerRougeTranscript,
+      mediaUrl: khmerRougeInterviewTranscript,
       sttType: 'bbckaldi',
-      fileName: 'Hun Sen interview part1 transcript data',
+      fileName: 'transcript-data',
     });
   }
 
@@ -151,7 +147,7 @@ class App extends React.Component {
          <span className={ style.title }>
             Demo page for <mark>Khmer Transcript Creator</mark> - Component |&nbsp;
            <a
-             href="https://github.com/RyanQuey/react-transcript-editor"
+             href="https://github.com/RyanQuey/khmer-react-transcript-creator"
              rel="noopener noreferrer"
              target="_blank"
            >
@@ -163,8 +159,6 @@ class App extends React.Component {
            fileName = {this.state.fileName}
            playingWhileListening = { this.state.playingWhileListening }
          />
-         <br />
-         <button onClick={ () => this.loadDemo() }>load demo</button>
          <hr />
          <label>Load Local Audio or Video Media:&nbsp;</label>
          <input
@@ -219,8 +213,11 @@ class App extends React.Component {
          <br />
 
          <button onClick={ () => this.clearLocalStorage() }>Clear Local Storage</button>
+         <br />
+         <button onClick={ () => this.loadDemo() }>load demo</button>
+         <br />
          {this.state.mediaUrl &&
-           <button onClick={ () => this.startListeningAndPlayingMedia() }>Generate Transcript from Media</button>
+           <button onClick={ () => this.startListeningAndPlayingMedia() }>Play From Start While Listening</button>
          }
          <hr/>
 
