@@ -15,8 +15,8 @@ import { convertToArabicNumbers } from '../../Util/khmer-numbers/';
 
 const PLAYBACK_RATES = [
   //  { value: 0.2, label: '0.2' },
-  { value: 0.25, label: '0.25' },
   { value: 0.5, label: '0.5' },
+  { value: 0.6, label: '0.6' },
   { value: 0.75, label: '0.75' },
   { value: 1, label: '1' },
   { value: 1.25, label: '1.25' },
