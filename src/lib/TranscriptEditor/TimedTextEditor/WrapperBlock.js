@@ -239,7 +239,7 @@ class WrapperBlock extends React.Component {
 
     return (
       <div className={ style.WrapperBlock }>
-        <div className={ style.markers }>
+        <div className={ style.markers } contentEditable={ false }>
           {blockProps.showSpeakers ? speakerElement : ''}
           <FontAwesomeIcon icon={ faMapMarker } onMouseDown={ this.handleJumpToHereClick } className= { style.jumpToHere } title="Jump to this time" />
           {blockProps.showTimecodes ? timecodeElement : ''}

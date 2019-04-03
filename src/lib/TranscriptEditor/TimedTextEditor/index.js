@@ -133,7 +133,7 @@ class TimedTextEditor extends React.Component {
         }
         this.saveTimer = setTimeout(() => {
           this.localSave(this.props.mediaUrl);
-        }, 5000);
+        }, 1000);
       });
     }
 
@@ -567,7 +567,7 @@ class TimedTextEditor extends React.Component {
           currentWord.end = word.end;
 
           const nextBlock = blockMap[i + 2] || blockMap[i + 1]
-          const next = ((nextBlock.data || {}).words || [])[0] || {};
+          const next = nextBlock && ((nextBlock.data || {}).words || [])[0] || {};
           if (next) {
             // won't be a next for last word in transcript
             nextWord.start = next.start;
@@ -579,7 +579,7 @@ class TimedTextEditor extends React.Component {
       }
     }
 
-    if (checkToScroll && currentWord.start !== 'NA') {
+    if (checkToScroll && currentWord.start !== 'NA' && this.props.isPlaying()) {
       if (this.props.isScrollIntoViewOn) {
         const thisWordElement = document.querySelector(`.Word[data-start="${ currentWord.start }"]`);
         const nextWordElement = document.querySelector(`.Word[data-start="${ nextWord.start }"]`);
