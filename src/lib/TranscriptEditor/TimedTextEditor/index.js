@@ -113,9 +113,7 @@ class TimedTextEditor extends React.Component {
       const contentState = editorState.getCurrentContent();
       const blockKey = contentState.getSelectionAfter().getStartKey() // TODO maybe should be getSelectionAfter
       const currentBlock = contentState.getBlockForKey(blockKey)
-      console.log("block key", blockKey, currentBlock)
       const entityKey = this.findEntityKeyForBlock(currentBlock)
-      console.log(entityKey)
       contentState.mergeEntityData(entityKey, {
         offset: 0,
         length: currentBlock.getText().length
@@ -329,6 +327,7 @@ class TimedTextEditor extends React.Component {
     if (e.keyCode === enterKey ) {
       return 'split-paragraph';
     }
+    // TODO add in the hotkeys I have
     // if alt key is pressed in combination with these other keys
     if (e.altKey && ((e.keyCode === spaceKey)
     || (e.keyCode === spaceKey)
@@ -376,6 +375,11 @@ class TimedTextEditor extends React.Component {
     // only perform if selection is not selecting a range of words
     // in that case, we'd expect delete + enter to achieve same result.
     if (currentSelection.isCollapsed()) {
+      if (this.props.isPauseWhileTypingOn) {
+        if (this.props.isPlaying()) {
+          this.props.playMedia(false);
+        }
+      }
       const currentContent = this.state.editorState.getCurrentContent();
       // https://draftjs.org/docs/api-reference-modifier#splitblock
       const newContentState = Modifier.splitBlock(currentContent, currentSelection);
@@ -388,6 +392,8 @@ class TimedTextEditor extends React.Component {
       const originalBlockData = originalBlock.getData();
       const blockSpeaker = originalBlockData.get('speaker');
       const blockStartTime = originalBlockData.get('start');
+      const currentWord = this.getCurrentWord(false)
+      const originalIsCurrent = currentWord.start == blockStartTime
 
       const wordStartTime = blockStartTime;
 
@@ -397,21 +403,39 @@ class TimedTextEditor extends React.Component {
       // adding words data too
       // starts with same worddata, and then replace the 'word' and 'punct' keys
       let wordsDataForNew = originalBlockData.get('words') || [ {} ];
-      // if (!List.isList(wordsDataForNew) || !Map.isMap(wordsDataForNew)) {
+      // TODO make everything just normal JS, not immutable. Unless decide to move everything to imutable
       if (!Map.isMap(wordsDataForNew)) {
         wordsDataForNew = fromJS(wordsDataForNew);
       }
       const newBlock = newContentState.getBlockAfter(originalBlock.getKey());
-      // make word and punct just the new words and punct
-      // TODO thinking of maybe keeping the original punct and word keys alone, even when splitting, since we never use it. Though it does make things confusing, shows where things originated from, and we never use that data (I think...) in the actual app
-      wordsDataForNew = wordsDataForNew.setIn([ 0, 'word' ], newBlock.getText())
-        .setIn([ 0, 'punct' ], newBlock.getText());
+      // TODO make everything just normal JS, not immutable. Unless decide to move everything to imutable
 
+      // TODO make an option later. But for now, default is if splitting a block that is currently playing in the audio, make the new start time the current media time
+      const newStartTime = originalIsCurrent ? this.props.currentTime : wordStartTime;
+
+      // make word and punct just the new words and punct
+      wordsDataForNew = wordsDataForNew
+        .setIn([ 0, 'word' ], newBlock.getText())
+        .setIn([ 0, 'punct' ], newBlock.getText())
+        .setIn([ 0, 'start' ], newStartTime);
+
+      let wordsDataForOld = originalBlockData.get('words') || [ {} ];
+      // if (!List.isList(wordsDataForOld) || !Map.isMap(wordsDataForOld)) {
+      // TODO make everything just normal JS, not immutable. Unless decide to move everything to imutable
+      if (!Map.isMap(wordsDataForOld)) {
+        wordsDataForOld = fromJS(wordsDataForOld);
+      }
+      const wordsLeft = originalBlock.getText().slice(0, - (newBlock.getText().length));
+      wordsDataForOld = wordsDataForOld.setIn([ 0, 'word' ], wordsLeft)
+        .setIn([ 0, 'end' ], newStartTime)
+        .setIn([ 0, 'punct' ], wordsLeft);
+
+      // add the new block (the third arg) into draft js
       const afterMergeContentState = Modifier.mergeBlockData(
         splitState.getCurrentContent(),
         targetSelection,
         {
-          'start': wordStartTime,
+          'start': newStartTime,
           'speaker': blockSpeaker,
           'words': wordsDataForNew,
         }
@@ -419,15 +443,6 @@ class TimedTextEditor extends React.Component {
       const newestEditorState = this.setEditorNewContentState(afterMergeContentState);
 
       // update old transcript word and punct
-      let wordsDataForOld = originalBlockData.get('words') || [ {} ];
-      // if (!List.isList(wordsDataForOld) || !Map.isMap(wordsDataForOld)) {
-      if (!Map.isMap(wordsDataForOld)) {
-        wordsDataForOld = fromJS(wordsDataForOld);
-      }
-      const wordsLeft = originalBlock.getText().slice(0, - (newBlock.getText().length));
-      // TODO thinking of maybe keeping the original punct and word keys alone, even when splitting, since we never use it. Though it does make things confusing, shows where things originated from, and we never use that data (I think...) in the actual app
-      wordsDataForOld = wordsDataForOld.setIn([ 0, 'word' ], wordsLeft)
-        .setIn([ 0, 'punct' ], wordsLeft);
 
       const afterMergeContentState2 = Modifier.mergeBlockData(
         newestEditorState.getCurrentContent(),
@@ -617,7 +632,7 @@ class TimedTextEditor extends React.Component {
       How does this work?
     </Tooltip>;
 
-    const currentWord = this.getCurrentWord(true); // true, so scrolls if setting says to
+    const currentWord = this.getCurrentWord(true); // arg is true, so scrolls if setting says to
     const highlightColour = '#c0def3';
     const unplayedColor = '#767676';
     const correctionBorder = '1px dotted blue';
