@@ -1,5 +1,6 @@
 .container {
   height: 100vh;
-  font-family: ReithSerif, Fallback, sans-serif;
+  /* font-family: ReithSerif, Fallback, sans-serif; */
+  font-family: 'Freehand', cursive, Fallback, sans-serif;
   /* box-sizing: border-box; TODO */
 }
