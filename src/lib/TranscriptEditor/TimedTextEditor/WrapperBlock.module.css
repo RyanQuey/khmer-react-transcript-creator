@@ -25,6 +25,7 @@
   float: right;
   clear: right;
   line-height: 2.4em;/* bigger for Khmer */
+  font-family: 'Freehand'; /* nice handwriting style Khmer font */
 }
 
 .speaker {
