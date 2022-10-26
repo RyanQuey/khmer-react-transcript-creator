@@ -85,7 +85,7 @@ export default function SpeechRecognition(options) {
               recognition.abort()
               break
             case 'RESET':
-              pauseAfterDisconnect = false
+              pauseAfterDisconnect = true
               recognition.abort()
               break
             case 'STOP':
@@ -160,7 +160,7 @@ export default function SpeechRecognition(options) {
               interimTranscript,
               event.results[i][0].transcript
             )
-            newState.finalTranscript = interimTranscript
+            newState.interimTranscript = interimTranscript
           }
         }
 
