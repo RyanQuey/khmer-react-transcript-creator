@@ -1,7 +1,13 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 // import getAudio from './getAudio'
-import SpeechRecognition from '../updated-react-speech-recognition/src/'
-import { secondsToTimecode, timecodeToSeconds } from '../Util/timecode-converter/index';
+import SpeechRecognition from "../updated-react-speech-recognition/src/";
+import {
+  secondsToTimecode,
+  timecodeToSeconds,
+} from "../Util/timecode-converter/index";
+import "./style.css";
+
+import { Editor, EditorState, SelectionState, Modifier } from "draft-js";
 
 /*
 const propTypes = {
@@ -16,55 +22,74 @@ class GenerateTranscript extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      history: [],
+      editorState: EditorState.createEmpty(),
     };
+    this.onChange = (editorState) => this.setState({ editorState });
 
-    this.stop = this.stop.bind(this)
-    this.start = this.start.bind(this)
-    this.reset = this.reset.bind(this)
-    this.generateJSON = this.generateJSON.bind(this)
+    this.stop = this.stop.bind(this);
+    this.pause = this.pause.bind(this);
+    this.start = this.start.bind(this);
+    this.reset = this.reset.bind(this);
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
-    props.recognition.lang = "km"
+    props.recognition.lang = "en"; //"km";
   }
-
+  componentDidMount() {
+    this.setState({
+      editorState:  EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
+    });
+  }
   componentDidUpdate(prevProps) {
-    if (this.props.playingWhileListening && !prevProps.playingWhileListening && !this.props.listening) {
-      this.props.startListening()
+    if (
+      this.props.playingWhileListening &&
+      !prevProps.playingWhileListening &&
+      !this.props.listening
+    ) {
+      this.props.startListening();
     }
   }
+  insertAtCursor(text) {
+    const editorState = this.state.editorState;
+    // get current editor state
+    const currentContent = editorState.getCurrentContent();
 
-  stop(e) {
-    this.props.stopListening()
-  }
-  start(e) {
-    // console.log("starting")
-    this.props.startListening()
-  }
-  generateJSON(e) {
-    let transcriptJSON = {
-      action: "audio-transcribe",
-      retval: this.props.transcriptData
-    }
-    // if use finalTranscript, anything that hasn't been finalized isn't counted, which would be confusing, since even if you wait sometimes it isn't yet made final
-    transcriptJSON.retval.punct = this.props.transcript
+    // create new selection state where focus is at the end
+    const selection = editorState.getSelection();
+    //insert text at the selection created above
+    const textWithInsert = Modifier.insertText(
+      currentContent,
+      selection,
+      text,
+      null
+    );
+    const editorWithInsert = EditorState.push(
+      editorState,
+      textWithInsert,
+      "insert-characters"
+    );
 
     this.setState({
-      transcriptJSON
-    })
-
-    // console.log(transcriptJSON)
-    // content, filename, format
-    let filename = this.props.fileName.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").replace(/\s/g, "-")
-    let prettyData = JSON.stringify(transcriptJSON, null, 4)
-
-    this.props.download(prettyData, `${ filename }.json`)
-
-    return transcriptJSON
+      editorState: editorWithInsert,
+    });
   }
+  stop(e) {
+    this.props.stopListening();
+    this.insertAtCursor(this.props.finalTranscript + " ");
+    this.props.resetTranscript();
+  }
+  pause(e) {
+    this.props.stopListening();
+  }
+  start(e) {
+    this.props.startListening();
+  }
+  
   reset(e) {
-    this.props.resetTranscript()
+    this.props.stopListening();
+    this.props.resetTranscript();
   }
   render() {
     const {
@@ -73,47 +98,58 @@ class GenerateTranscript extends Component {
       // interimTranscript,
       listening,
       // allResults
-    } = this.props
+    } = this.props;
 
     if (!browserSupportsSpeechRecognition) {
       // NOTE happens several times, as this gets rerendered for some reason. Returns false even when browser can support sometimes for some reason too, but eventually returns true
-      return null
+      return null;
     }
     //TODO add back in once we switch over to using my fork  which passes down all results as an array rather than compiling all into a string
 
     return (
       <div>
         <h1>Speech Recognition</h1>
-        <button onClick = { this.reset } >Reset</button>
-        <button onClick = { this.start } >Start</button>
-        <button onClick = { this.stop } >Stop</button>
+        <button onClick={this.reset} onMouseDown={e => e.preventDefault()}>Reset</button>
+        <button onClick={this.start} onMouseDown={e => e.preventDefault()}>Start</button>
+        <button onClick={this.pause} onMouseDown={e => e.preventDefault()}>Pause</button>
+        <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button>
         <br />
-        <button onClick = { this.generateJSON } >Generate Transcript JSON</button>
-        <div className="transcript-container" style={ { maxHeight: '240px', overflowY: 'auto' } }>
-          {
-            <div>{transcript}</div>
-          }
+        <div
+          className="transcript-container"
+        >
+          {this.props.transcript}
         </div>
-        { listening ? (
+        {listening ? (
           <span>
-            *Listening* Total Time Elapsed: {secondsToTimecode(this.props.totalTimeElapsed)}
+            *Listening* Total Time Elapsed:{" "}
+            {secondsToTimecode(this.props.totalTimeElapsed)}
           </span>
         ) : (
           <div>&nbsp;</div>
         )}
-        {false && <div>
-          <p>Volume</p>
-          <input id="volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
-        </div>}
-
+        <Editor editorState={this.state.editorState} onChange={this.onChange} />
+       
+        {false && (
+          <div>
+            <p>Volume</p>
+            <input
+              id="volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.5"
+            />
+          </div>
+        )}
       </div>
-    )
+    );
   }
 }
 
 // GenerateTranscript.propTypes = propTypes
 
 const options = {
-  autoStart: false
-}
-export default SpeechRecognition(options)(GenerateTranscript)
+  autoStart: false,
+};
+export default SpeechRecognition(options)(GenerateTranscript);
