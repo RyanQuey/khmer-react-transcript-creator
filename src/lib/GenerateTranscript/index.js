@@ -8,7 +8,8 @@ import {
 import "./style.css";
 
 import { Editor, EditorState, SelectionState, Modifier } from "draft-js";
-
+import KhmerHelpers from "./helpers/khmer-helpers";
+import {combineKeywords} from "./helpers/combine-keywords";
 /*
 const propTypes = {
   // Props injected by SpeechRecognition
@@ -23,11 +24,11 @@ class GenerateTranscript extends Component {
     super(props);
     this.state = {
       history: [],
+      words: [],
       editorState: EditorState.createEmpty(),
     };
     this.onChange = (editorState) => this.setState({ editorState });
 
-    this.stop = this.stop.bind(this);
     this.pause = this.pause.bind(this);
     this.start = this.start.bind(this);
     this.reset = this.reset.bind(this);
@@ -35,11 +36,53 @@ class GenerateTranscript extends Component {
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
-    props.recognition.lang = "en"; //"km";
+    props.recognition.lang = "km";
   }
+
+  static getDerivedStateFromProps(props, state) {
+    if (
+      props.transcriptData && props.transcriptData.words.length > state.words.length
+    ) {
+      const sentence = props.transcriptData.words[props.transcriptData.words.length-1];
+      const splitWords = combineKeywords(sentence.word.split(" ").map(word => {
+        return {
+          ...sentence,
+          word
+        }
+      }));
+      console.log(splitWords);
+      const textToAdd = splitWords.map(word => word.word).join(" ") + " ";
+      // get current editor state
+      const currentContent = state.editorState.getCurrentContent();
+
+      // create new selection state where focus is at the end
+      const selection = state.editorState.getSelection();
+      //insert text at the selection created above
+      const textWithInsert = Modifier.insertText(
+        currentContent,
+        selection,
+        textToAdd,
+        null
+      );
+      const newEditorState = EditorState.push(
+        state.editorState,
+        textWithInsert,
+        "insert-characters"
+      );
+
+      return {
+        ...state,
+        words: [...props.transcriptData.words],
+        history: state.history.concat(textToAdd),
+        editorState: newEditorState,
+      };
+    }
+    return null;
+  }
+
   componentDidMount() {
     this.setState({
-      editorState:  EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
+      editorState: EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
     });
   }
   componentDidUpdate(prevProps) {
@@ -51,46 +94,25 @@ class GenerateTranscript extends Component {
       this.props.startListening();
     }
   }
-  insertAtCursor(text) {
-    const editorState = this.state.editorState;
-    // get current editor state
-    const currentContent = editorState.getCurrentContent();
 
-    // create new selection state where focus is at the end
-    const selection = editorState.getSelection();
-    //insert text at the selection created above
-    const textWithInsert = Modifier.insertText(
-      currentContent,
-      selection,
-      text,
-      null
-    );
-    const editorWithInsert = EditorState.push(
-      editorState,
-      textWithInsert,
-      "insert-characters"
-    );
-
-    this.setState({
-      editorState: editorWithInsert,
-    });
-  }
-  stop(e) {
-    this.props.stopListening();
-    this.insertAtCursor(this.props.finalTranscript + " ");
-    this.props.resetTranscript();
-  }
-  pause(e) {
-    this.props.stopListening();
-  }
-  start(e) {
-    this.props.startListening();
-  }
-  
   reset(e) {
     this.props.stopListening();
     this.props.resetTranscript();
+    this.setState({
+      editorState: EditorState.createEmpty(),
+      transcriptData: [],
+      history: [],
+    });
   }
+
+  start(e) {
+    this.props.startListening();
+  }
+
+  pause(e) {
+    this.props.stopListening();
+  }
+
   render() {
     const {
       transcript,
@@ -109,15 +131,21 @@ class GenerateTranscript extends Component {
     return (
       <div>
         <h1>Speech Recognition</h1>
-        <button onClick={this.reset} onMouseDown={e => e.preventDefault()}>Reset</button>
-        <button onClick={this.start} onMouseDown={e => e.preventDefault()}>Start</button>
-        <button onClick={this.pause} onMouseDown={e => e.preventDefault()}>Pause</button>
-        <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button>
+        <button onClick={this.reset} onMouseDown={(e) => e.preventDefault()}>
+          Reset
+        </button>
+        <button onClick={this.start} onMouseDown={(e) => e.preventDefault()}>
+          Start
+        </button>
+        <button onClick={this.pause} onMouseDown={(e) => e.preventDefault()}>
+          Pause
+        </button>
+        {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
         <br />
-        <div
-          className="transcript-container"
-        >
-          {this.props.transcript}
+        <div className="transcript-container">
+          In progress: {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""} ...
+          <br/>
+          History: {JSON.stringify(this.state.history)}
         </div>
         {listening ? (
           <span>
@@ -128,7 +156,7 @@ class GenerateTranscript extends Component {
           <div>&nbsp;</div>
         )}
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
-       
+
         {false && (
           <div>
             <p>Volume</p>

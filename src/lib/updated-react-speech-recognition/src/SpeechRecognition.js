@@ -4,7 +4,7 @@ export default function SpeechRecognition(options) {
   const SpeechRecognitionInner = function (WrappedComponent) {
     const BrowserSpeechRecognition =
       typeof window !== 'undefined' &&
-      (window.SpeechRecognition ||
+      (window.SpeechRecognitionAlternative ||
         window.webkitSpeechRecognition ||
         window.mozSpeechRecognition ||
         window.msSpeechRecognition ||
