@@ -21,6 +21,17 @@ const propTypes = {
 }
 */
 
+const manualFixes = [
+  {
+    modified: "សេចក**ី",
+    target: "សេចក្ដី",
+  },
+  {
+    modified: "ក**ៅ",
+    target: "ក្ដៅ",
+  },
+];
+
 class GenerateTranscript extends Component {
   constructor(props) {
     super(props);
@@ -50,11 +61,16 @@ class GenerateTranscript extends Component {
       const sentence =
         props.transcriptData.words[props.transcriptData.words.length - 1];
       try {
+        let phrase = sentence.word;
+        manualFixes.forEach((modifier) => {
+          phrase = phrase.replace(modifier.modified, modifier.target);
+        });
+
         const splitWords = combineKeywords(
-          split(sentence.word).map((word) => {
+          split(phrase).map((word) => {
             return {
               ...sentence,
-              word,
+              word: Helpers.PREFERRED_SPELLINGS[word] || word,
             };
           })
         );
@@ -155,7 +171,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition</h1>
+        <h1>Speech Recognition v2.0.0</h1>
         <button onClick={this.reset} onMouseDown={(e) => e.preventDefault()}>
           Reset
         </button>
