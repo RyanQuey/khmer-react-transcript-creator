@@ -156,8 +156,6 @@ class GenerateTranscript extends Component {
         <br />
         <div className="transcript-container">
           In progress: {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""} ...
-          {/* <br/>
-          History: {JSON.stringify(this.state.history)} */}
           <br/>
           {this.state.error && <span style={{color: "red"}}>{this.state.error}</span>}
         </div>
