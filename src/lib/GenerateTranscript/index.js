@@ -29,9 +29,10 @@ class GenerateTranscript extends Component {
       error: "",
       words: [],
       editorState: EditorState.createEmpty(),
+      notepadState: EditorState.createEmpty(),
     };
     this.onChange = (editorState) => this.setState({ editorState });
-
+    this.onChangeNotepad = (editorState) => this.setState({ notepadState: editorState });
     this.pause = this.pause.bind(this);
     this.start = this.start.bind(this);
     this.reset = this.reset.bind(this);
@@ -168,6 +169,9 @@ class GenerateTranscript extends Component {
         ) : (
           <div>&nbsp;</div>
         )}
+        <h3>Notepad</h3>
+        <Editor editorState={this.state.notepadState} onChange={this.onChangeNotepad} />
+        <h3>Result</h3>
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
 
         {false && (

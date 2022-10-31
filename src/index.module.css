@@ -1,5 +1,7 @@
+@font-face { font-family: Khmer; src: url('./fonts/Khmer Mondulkiri Regular.ttf'); } 
+
 .container {
   height: 100vh;
-  font-family: ReithSerif, Fallback, sans-serif;
+  font-family: Khmer, ReithSerif, Fallback, sans-serif;
   /* box-sizing: border-box; TODO */
 }
