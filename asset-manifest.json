@@ -1,14 +1,14 @@
 {
   "main.css": "./static/css/main.ebd5a2e1.chunk.css",
-  "main.js": "./static/js/main.ee8385d2.chunk.js",
-  "main.js.map": "./static/js/main.ee8385d2.chunk.js.map",
-  "static/js/1.3a551e48.chunk.js": "./static/js/1.3a551e48.chunk.js",
-  "static/js/1.3a551e48.chunk.js.map": "./static/js/1.3a551e48.chunk.js.map",
+  "main.js": "./static/js/main.59b2ff41.chunk.js",
+  "main.js.map": "./static/js/main.59b2ff41.chunk.js.map",
+  "static/js/1.27cf3359.chunk.js": "./static/js/1.27cf3359.chunk.js",
+  "static/js/1.27cf3359.chunk.js.map": "./static/js/1.27cf3359.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
   "runtime~main.js.map": "./static/js/runtime~main.4a686d48.js.map",
   "static/media/index.module.css": "./static/media/Khmer Mondulkiri Regular.16981de9.ttf",
   "static/css/main.ebd5a2e1.chunk.css.map": "./static/css/main.ebd5a2e1.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.b4d13783b099a327d43efec7d32821b3.js": "./precache-manifest.b4d13783b099a327d43efec7d32821b3.js",
+  "precache-manifest.c4c7d51bcf62243c05588a90fa7d7573.js": "./precache-manifest.c4c7d51bcf62243c05588a90fa7d7573.js",
   "service-worker.js": "./service-worker.js"
 }
