@@ -24,6 +24,7 @@ class GenerateTranscript extends Component {
     super(props);
     this.state = {
       history: [],
+      error: "",
       words: [],
       editorState: EditorState.createEmpty(),
     };
@@ -40,43 +41,51 @@ class GenerateTranscript extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (
-      props.transcriptData && props.transcriptData.words.length > state.words.length
-    ) {
-      const sentence = props.transcriptData.words[props.transcriptData.words.length-1];
-      const splitWords = combineKeywords(sentence.word.split(" ").map(word => {
-        return {
-          ...sentence,
-          word
+      if (
+        props.transcriptData && props.transcriptData.words.length > state.words.length
+      ) {
+        const sentence = props.transcriptData.words[props.transcriptData.words.length-1];
+        try {
+          const splitWords = combineKeywords(sentence.word.split(" ").map(word => {
+            return {
+              ...sentence,
+              word
+            }
+          }));
+          const textToAdd = splitWords.map(word => word.word).join(" ") + " ";
+          // get current editor state
+          const currentContent = state.editorState.getCurrentContent();
+
+          // create new selection state where focus is at the end
+          const selection = state.editorState.getSelection();
+          //insert text at the selection created above
+          const textWithInsert = Modifier.insertText(
+            currentContent,
+            selection,
+            textToAdd,
+            null
+          );
+          const newEditorState = EditorState.push(
+            state.editorState,
+            textWithInsert,
+            "insert-characters"
+          );
+
+          return {
+            ...state,
+            words: [...props.transcriptData.words],
+            history: state.history.concat(textToAdd),
+            editorState: newEditorState,
+          };
+        }catch(e){
+          return {
+            ...state,
+            error: "Could not add " + sentence
+          };
         }
-      }));
-      console.log(splitWords);
-      const textToAdd = splitWords.map(word => word.word).join(" ") + " ";
-      // get current editor state
-      const currentContent = state.editorState.getCurrentContent();
+      }
 
-      // create new selection state where focus is at the end
-      const selection = state.editorState.getSelection();
-      //insert text at the selection created above
-      const textWithInsert = Modifier.insertText(
-        currentContent,
-        selection,
-        textToAdd,
-        null
-      );
-      const newEditorState = EditorState.push(
-        state.editorState,
-        textWithInsert,
-        "insert-characters"
-      );
-
-      return {
-        ...state,
-        words: [...props.transcriptData.words],
-        history: state.history.concat(textToAdd),
-        editorState: newEditorState,
-      };
-    }
+   
     return null;
   }
 
@@ -146,6 +155,8 @@ class GenerateTranscript extends Component {
           In progress: {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""} ...
           <br/>
           History: {JSON.stringify(this.state.history)}
+          <br/>
+          {this.state.error && <span style={{color: "red"}}>{this.state.error}</span>}
         </div>
         {listening ? (
           <span>
