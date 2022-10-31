@@ -8,8 +8,10 @@ import {
 import "./style.css";
 
 import { Editor, EditorState, SelectionState, Modifier } from "draft-js";
-import KhmerHelpers from "./helpers/khmer-helpers";
 import {combineKeywords} from "./helpers/combine-keywords";
+import { split } from 'split-khmer';
+import Helpers from "./helpers/khmer-helpers";
+
 /*
 const propTypes = {
   // Props injected by SpeechRecognition
@@ -46,13 +48,13 @@ class GenerateTranscript extends Component {
       ) {
         const sentence = props.transcriptData.words[props.transcriptData.words.length-1];
         try {
-          const splitWords = combineKeywords(sentence.word.split(" ").map(word => {
+          const splitWords = combineKeywords(split(sentence.word).map(word => {
             return {
               ...sentence,
               word
             }
           }));
-          const textToAdd = splitWords.map(word => word.word).join(" ") + " ";
+          const textToAdd = splitWords.map(word => word.word).join(Helpers.ZERO_WIDTH_SPACE);
           // get current editor state
           const currentContent = state.editorState.getCurrentContent();
 
@@ -153,8 +155,8 @@ class GenerateTranscript extends Component {
         <br />
         <div className="transcript-container">
           In progress: {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""} ...
-          <br/>
-          History: {JSON.stringify(this.state.history)}
+          {/* <br/>
+          History: {JSON.stringify(this.state.history)} */}
           <br/>
           {this.state.error && <span style={{color: "red"}}>{this.state.error}</span>}
         </div>
