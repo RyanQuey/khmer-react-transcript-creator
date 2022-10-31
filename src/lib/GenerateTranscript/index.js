@@ -24,11 +24,11 @@ const propTypes = {
 class GenerateTranscript extends Component {
   constructor(props) {
     super(props);
+    const editorState = EditorState.createEmpty();
     this.state = {
-      history: [],
       error: "",
       words: [],
-      editorState: EditorState.createEmpty(),
+      editorState: EditorState.moveFocusToEnd(editorState),
     };
     this.onChange = (editorState) => this.setState({ editorState });
     this.pause = this.pause.bind(this);
@@ -82,7 +82,6 @@ class GenerateTranscript extends Component {
         return {
           ...state,
           words: [...props.transcriptData.words],
-          history: state.history.concat(textToAdd),
           editorState: newEditorState,
         };
       } catch (e) {
@@ -96,11 +95,11 @@ class GenerateTranscript extends Component {
     return null;
   }
 
-  componentDidMount() {
-    this.setState({
-      editorState: EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
-    });
-  }
+  // componentDidMount() {
+  //   this.setState({
+  //     editorState: EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
+  //   });
+  // }
   componentDidUpdate(prevProps) {
     if (
       this.props.playingWhileListening &&
@@ -114,10 +113,11 @@ class GenerateTranscript extends Component {
   reset(e) {
     this.props.stopListening();
     this.props.resetTranscript();
+    const editorState = EditorState.createEmpty();
     this.setState({
-      editorState: EditorState.createEmpty(),
-      transcriptData: [],
-      history: [],
+      editorState: EditorState.moveFocusToEnd(editorState),
+      words: [],
+      error: "",
     });
   }
 
@@ -130,11 +130,11 @@ class GenerateTranscript extends Component {
   }
   copy(e) {
     const text = this.state.editorState.getCurrentContent().getPlainText();
-    var input = document.createElement('input');
-    input.setAttribute('value', text);
+    var input = document.createElement("input");
+    input.setAttribute("value", text);
     document.body.appendChild(input);
     input.select();
-    var result = document.execCommand('copy');
+    var result = document.execCommand("copy");
     document.body.removeChild(input);
     return result;
   }
