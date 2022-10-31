@@ -8,8 +8,8 @@ import {
 import "./style.css";
 
 import { Editor, EditorState, SelectionState, Modifier } from "draft-js";
-import {combineKeywords} from "./helpers/combine-keywords";
-import { split } from 'split-khmer';
+import { combineKeywords } from "./helpers/combine-keywords";
+import { split } from "split-khmer";
 import Helpers from "./helpers/khmer-helpers";
 
 /*
@@ -29,13 +29,12 @@ class GenerateTranscript extends Component {
       error: "",
       words: [],
       editorState: EditorState.createEmpty(),
-      notepadState: EditorState.createEmpty(),
     };
     this.onChange = (editorState) => this.setState({ editorState });
-    this.onChangeNotepad = (editorState) => this.setState({ notepadState: editorState });
     this.pause = this.pause.bind(this);
     this.start = this.start.bind(this);
     this.reset = this.reset.bind(this);
+    this.copy = this.copy.bind(this);
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
@@ -44,51 +43,56 @@ class GenerateTranscript extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-      if (
-        props.transcriptData && props.transcriptData.words.length > state.words.length
-      ) {
-        const sentence = props.transcriptData.words[props.transcriptData.words.length-1];
-        try {
-          const splitWords = combineKeywords(split(sentence.word).map(word => {
+    if (
+      props.transcriptData &&
+      props.transcriptData.words.length > state.words.length
+    ) {
+      const sentence =
+        props.transcriptData.words[props.transcriptData.words.length - 1];
+      try {
+        const splitWords = combineKeywords(
+          split(sentence.word).map((word) => {
             return {
               ...sentence,
-              word
-            }
-          }));
-          const textToAdd = splitWords.map(word => word.word).join(Helpers.ZERO_WIDTH_SPACE);
-          // get current editor state
-          const currentContent = state.editorState.getCurrentContent();
+              word,
+            };
+          })
+        );
+        const textToAdd = splitWords
+          .map((word) => word.word)
+          .join(Helpers.ZERO_WIDTH_SPACE);
+        // get current editor state
+        const currentContent = state.editorState.getCurrentContent();
 
-          // create new selection state where focus is at the end
-          const selection = state.editorState.getSelection();
-          //insert text at the selection created above
-          const textWithInsert = Modifier.insertText(
-            currentContent,
-            selection,
-            textToAdd,
-            null
-          );
-          const newEditorState = EditorState.push(
-            state.editorState,
-            textWithInsert,
-            "insert-characters"
-          );
+        // create new selection state where focus is at the end
+        const selection = state.editorState.getSelection();
+        //insert text at the selection created above
+        const textWithInsert = Modifier.insertText(
+          currentContent,
+          selection,
+          textToAdd,
+          null
+        );
+        const newEditorState = EditorState.push(
+          state.editorState,
+          textWithInsert,
+          "insert-characters"
+        );
 
-          return {
-            ...state,
-            words: [...props.transcriptData.words],
-            history: state.history.concat(textToAdd),
-            editorState: newEditorState,
-          };
-        }catch(e){
-          return {
-            ...state,
-            error: "Could not add " + sentence
-          };
-        }
+        return {
+          ...state,
+          words: [...props.transcriptData.words],
+          history: state.history.concat(textToAdd),
+          editorState: newEditorState,
+        };
+      } catch (e) {
+        return {
+          ...state,
+          error: "Could not add " + sentence,
+        };
       }
+    }
 
-   
     return null;
   }
 
@@ -124,7 +128,16 @@ class GenerateTranscript extends Component {
   pause(e) {
     this.props.stopListening();
   }
-
+  copy(e) {
+    const text = this.state.editorState.getCurrentContent().getPlainText();
+    var input = document.createElement('input');
+    input.setAttribute('value', text);
+    document.body.appendChild(input);
+    input.select();
+    var result = document.execCommand('copy');
+    document.body.removeChild(input);
+    return result;
+  }
   render() {
     const {
       transcript,
@@ -152,12 +165,21 @@ class GenerateTranscript extends Component {
         <button onClick={this.pause} onMouseDown={(e) => e.preventDefault()}>
           Pause
         </button>
+        <button onClick={this.copy} onMouseDown={(e) => e.preventDefault()}>
+          Copy
+        </button>
         {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
         <br />
         <div className="transcript-container">
-          In progress: {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""} ...
-          <br/>
-          {this.state.error && <span style={{color: "red"}}>{this.state.error}</span>}
+          In progress:{" "}
+          {this.props.finalTranscript !== this.props.transcript
+            ? this.props.interimTranscript
+            : ""}{" "}
+          ...
+          <br />
+          {this.state.error && (
+            <span style={{ color: "red" }}>{this.state.error}</span>
+          )}
         </div>
         {listening ? (
           <span>
@@ -167,9 +189,6 @@ class GenerateTranscript extends Component {
         ) : (
           <div>&nbsp;</div>
         )}
-        <h3>Notepad</h3>
-        <Editor editorState={this.state.notepadState} onChange={this.onChangeNotepad} />
-        <h3>Result</h3>
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
 
         {false && (
