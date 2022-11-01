@@ -43,13 +43,13 @@ const KHMER_PUNCTUATION_NO_LEADER_KEYS = Object.keys(
 
 // all of these will require "sanna" (kh for "sign") before recognizing it
 const KHMER_PUNCTUATION = {
-  ខណ្ឌ: "។",
-  ខ័ណ្ឌ: "។",
+  ខណ្ឌ: "។ ",
+  ខ័ណ្ឌ: "។ ",
   // need this one too since sometimes they actually return this correctly, but we're having users
   // say khPunctuationLeader bfeore it anyways...
-  "។": "។",
-  សួរ: "?",
-  ឧទាន: "!",
+  "។": "។ ",
+  សួរ: "? ",
+  ឧទាន: "! ",
 };
 // These are different. Keys will be what we want, values a list of the words.
 // Makes it easy to iterate over and check for matches

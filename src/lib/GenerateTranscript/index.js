@@ -171,7 +171,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.0</h1>
+        <h1>Speech Recognition v2.0.1</h1>
         <button onClick={this.reset} onMouseDown={(e) => e.preventDefault()}>
           Reset
         </button>
