@@ -40,17 +40,22 @@ class GenerateTranscript extends Component {
       error: "",
       words: [],
       editorState: EditorState.moveFocusToEnd(editorState),
+      oldWords: [],
+      oldEditorState: null,
+      replacer: {},
+      shouldAddSpace: false,
     };
     this.onChange = (editorState) => this.setState({ editorState });
     this.pause = this.pause.bind(this);
     this.start = this.start.bind(this);
     this.reset = this.reset.bind(this);
     this.copy = this.copy.bind(this);
+    this.undo = this.undo.bind(this);
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
-    props.recognition.lang = "km";
+    props.recognition.lang = "KM";
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -62,22 +67,30 @@ class GenerateTranscript extends Component {
         props.transcriptData.words[props.transcriptData.words.length - 1];
       try {
         let phrase = sentence.word;
-        manualFixes.forEach((modifier) => {
-          phrase = phrase.replace(modifier.modified, modifier.target);
-        });
+        let textToAdd = "";
+        if (props.recognition.lang === "KM") {
+          manualFixes.forEach((modifier) => {
+            phrase = phrase.replace(modifier.modified, modifier.target);
+          });
 
-        const splitWords = combineKeywords(
-          split(phrase).map((word) => {
-            return {
-              ...sentence,
-              word: Helpers.PREFERRED_SPELLINGS[word] || word,
-            };
-          })
-        );
-        const textToAdd = splitWords
-          .map((word) => word.word)
-          .join(Helpers.ZERO_WIDTH_SPACE);
-        // get current editor state
+          const splitWords = combineKeywords(
+            split(phrase).map((word) => {
+              return {
+                ...sentence,
+                word: Helpers.PREFERRED_SPELLINGS[word] || this.state.replacer[word] || word,
+              };
+            })
+          );
+          textToAdd = splitWords
+            .map((word) => word.word)
+            .join(Helpers.ZERO_WIDTH_SPACE);
+        } else {
+          textToAdd = phrase
+            .split(" ")
+            .map((word) => state.replacer[word] || word)
+            .join(" ");
+        }
+        textToAdd += state.shouldAddSpace ? " " : "";
         const currentContent = state.editorState.getCurrentContent();
 
         // create new selection state where focus is at the end
@@ -97,13 +110,14 @@ class GenerateTranscript extends Component {
 
         return {
           ...state,
-          words: [...props.transcriptData.words],
           editorState: newEditorState,
+          words: [...props.transcriptData.words],
         };
       } catch (e) {
+        console.error(e);
         return {
           ...state,
-          error: "Could not add " + sentence,
+          error: "Could not add " + sentence.word,
         };
       }
     }
@@ -132,7 +146,8 @@ class GenerateTranscript extends Component {
     const editorState = EditorState.createEmpty();
     this.setState({
       editorState: EditorState.moveFocusToEnd(editorState),
-      words: [],
+      oldEditorState: this.state.editorState,
+      oldWords: this.state.words,
       error: "",
     });
   }
@@ -154,6 +169,15 @@ class GenerateTranscript extends Component {
     document.body.removeChild(input);
     return result;
   }
+  undo(e) {
+    this.setState({
+      ...this.state,
+      oldEditorState: null,
+      oldWords: null,
+      editorState: this.state.oldEditorState,
+      words: this.state.oldWords,
+    });
+  }
   render() {
     const {
       transcript,
@@ -172,6 +196,93 @@ class GenerateTranscript extends Component {
     return (
       <div>
         <h1>Speech Recognition v2.0.1</h1>
+        <select
+          onChange={(e) => {
+            this.props.recognition.lang = e.target.value;
+          }}
+          defaultValue={this.props.recognition.lang}
+          data-placeholder="Choose a Language..."
+        >
+          <option value="AF">Afrikaans</option>
+          <option value="SQ">Albanian</option>
+          <option value="AR">Arabic</option>
+          <option value="HY">Armenian</option>
+          <option value="EU">Basque</option>
+          <option value="BN">Bengali</option>
+          <option value="BG">Bulgarian</option>
+          <option value="CA">Catalan</option>
+          <option value="KM">Cambodian</option>
+          <option value="ZH">Chinese (Mandarin)</option>
+          <option value="HR">Croatian</option>
+          <option value="CS">Czech</option>
+          <option value="DA">Danish</option>
+          <option value="NL">Dutch</option>
+          <option value="EN">English</option>
+          <option value="ET">Estonian</option>
+          <option value="FJ">Fiji</option>
+          <option value="FI">Finnish</option>
+          <option value="FR">French</option>
+          <option value="KA">Georgian</option>
+          <option value="DE">German</option>
+          <option value="EL">Greek</option>
+          <option value="GU">Gujarati</option>
+          <option value="HE">Hebrew</option>
+          <option value="HI">Hindi</option>
+          <option value="HU">Hungarian</option>
+          <option value="IS">Icelandic</option>
+          <option value="ID">Indonesian</option>
+          <option value="GA">Irish</option>
+          <option value="IT">Italian</option>
+          <option value="JA">Japanese</option>
+          <option value="JW">Javanese</option>
+          <option value="KO">Korean</option>
+          <option value="LA">Latin</option>
+          <option value="LV">Latvian</option>
+          <option value="LT">Lithuanian</option>
+          <option value="MK">Macedonian</option>
+          <option value="MS">Malay</option>
+          <option value="ML">Malayalam</option>
+          <option value="MT">Maltese</option>
+          <option value="MI">Maori</option>
+          <option value="MR">Marathi</option>
+          <option value="MN">Mongolian</option>
+          <option value="NE">Nepali</option>
+          <option value="NO">Norwegian</option>
+          <option value="FA">Persian</option>
+          <option value="PL">Polish</option>
+          <option value="PT">Portuguese</option>
+          <option value="PA">Punjabi</option>
+          <option value="QU">Quechua</option>
+          <option value="RO">Romanian</option>
+          <option value="RU">Russian</option>
+          <option value="SM">Samoan</option>
+          <option value="SR">Serbian</option>
+          <option value="SK">Slovak</option>
+          <option value="SL">Slovenian</option>
+          <option value="ES">Spanish</option>
+          <option value="SW">Swahili</option>
+          <option value="SV">Swedish </option>
+          <option value="TA">Tamil</option>
+          <option value="TT">Tatar</option>
+          <option value="TE">Telugu</option>
+          <option value="TH">Thai</option>
+          <option value="BO">Tibetan</option>
+          <option value="TO">Tonga</option>
+          <option value="TR">Turkish</option>
+          <option value="UK">Ukrainian</option>
+          <option value="UR">Urdu</option>
+          <option value="UZ">Uzbek</option>
+          <option value="VI">Vietnamese</option>
+          <option value="CY">Welsh</option>
+          <option value="XH">Xhosa</option>
+        </select>
+        <button
+          disabled={!this.state.oldEditorState}
+          onClick={this.undo}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          Undo
+        </button>
         <button onClick={this.reset} onMouseDown={(e) => e.preventDefault()}>
           Reset
         </button>
@@ -184,6 +295,29 @@ class GenerateTranscript extends Component {
         <button onClick={this.copy} onMouseDown={(e) => e.preventDefault()}>
           Copy
         </button>
+        <label>
+          Should add space?:
+          <input
+            name="isGoing"
+            type="checkbox"
+            checked={this.state.shouldAddSpace}
+            onChange={(e) => {
+              this.setState({ shouldAddSpace: !this.state.shouldAddSpace });
+            }}
+          />
+        </label>
+        <br />
+        <label>Replacer: </label>
+        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={(e) => {
+          try { 
+            const newReplacer = JSON.parse(e.target.value);
+            this.setState({replacer: newReplacer});
+          }
+          catch(e){
+            this.setState({replacer: {}});
+          }
+        }} />
+
         {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
         <br />
         <div className="transcript-container">
