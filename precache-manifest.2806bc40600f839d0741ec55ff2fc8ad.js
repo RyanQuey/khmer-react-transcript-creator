@@ -1,15 +1,15 @@
 self.__precacheManifest = [
   {
-    "revision": "ad727e759e115df4e8ce",
-    "url": "./static/css/main.ebd5a2e1.chunk.css"
+    "revision": "b9addab4f96fe9737a1d",
+    "url": "./static/css/main.3d998775.chunk.css"
   },
   {
-    "revision": "ad727e759e115df4e8ce",
-    "url": "./static/js/main.ad727e75.chunk.js"
+    "revision": "b9addab4f96fe9737a1d",
+    "url": "./static/js/main.b9addab4.chunk.js"
   },
   {
-    "revision": "c65c77d1cc890889507f",
-    "url": "./static/js/1.c65c77d1.chunk.js"
+    "revision": "a71aacef972d19007bcc",
+    "url": "./static/js/1.a71aacef.chunk.js"
   },
   {
     "revision": "4a686d48d5a089750c49",
@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "./static/media/Khmer Mondulkiri Regular.16981de9.ttf"
   },
   {
-    "revision": "052bb4fe8945af4643c4febcdad111e8",
+    "revision": "144bda753ca00933e5ca365e8b6c2023",
     "url": "./index.html"
   }
 ];
