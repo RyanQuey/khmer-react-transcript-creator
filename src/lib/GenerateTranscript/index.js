@@ -65,6 +65,7 @@ class GenerateTranscript extends Component {
     ) {
       const sentence =
         props.transcriptData.words[props.transcriptData.words.length - 1];
+
       try {
         let phrase = sentence.word;
         let textToAdd = "";
@@ -125,30 +126,17 @@ class GenerateTranscript extends Component {
     return null;
   }
 
-  // componentDidMount() {
-  //   this.setState({
-  //     editorState: EditorState.moveFocusToEnd(this.state.editorState), // EditorState imported from draft-js
-  //   });
-  // }
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.playingWhileListening &&
-      !prevProps.playingWhileListening &&
-      !this.props.listening
-    ) {
-      this.props.startListening();
-    }
-  }
 
   reset(e) {
     this.props.stopListening();
     this.props.resetTranscript();
     const editorState = EditorState.createEmpty();
     this.setState({
+      error: "",
       editorState: EditorState.moveFocusToEnd(editorState),
+      words: [],
       oldEditorState: this.state.editorState,
       oldWords: this.state.words,
-      error: "",
     });
   }
 
@@ -159,6 +147,7 @@ class GenerateTranscript extends Component {
   pause(e) {
     this.props.stopListening();
   }
+
   copy(e) {
     const text = this.state.editorState.getCurrentContent().getPlainText();
     var input = document.createElement("input");
@@ -195,7 +184,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.2</h1>
+        <h1>Speech Recognition v2.0.3</h1>
         <select
           onChange={(e) => {
             this.props.recognition.lang = e.target.value;
