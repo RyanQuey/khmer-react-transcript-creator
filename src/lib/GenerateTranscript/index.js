@@ -77,7 +77,7 @@ class GenerateTranscript extends Component {
             split(phrase).map((word) => {
               return {
                 ...sentence,
-                word: Helpers.PREFERRED_SPELLINGS[word] || this.state.replacer[word] || word,
+                word: Helpers.PREFERRED_SPELLINGS[word] || state.replacer[word] || word,
               };
             })
           );
@@ -195,7 +195,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.1</h1>
+        <h1>Speech Recognition v2.0.2</h1>
         <select
           onChange={(e) => {
             this.props.recognition.lang = e.target.value;
@@ -306,17 +306,6 @@ class GenerateTranscript extends Component {
             }}
           />
         </label>
-        <br />
-        <label>Replacer: </label>
-        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={(e) => {
-          try { 
-            const newReplacer = JSON.parse(e.target.value);
-            this.setState({replacer: newReplacer});
-          }
-          catch(e){
-            this.setState({replacer: {}});
-          }
-        }} />
 
         {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
         <br />
@@ -340,7 +329,16 @@ class GenerateTranscript extends Component {
           <div>&nbsp;</div>
         )}
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
-
+        <label>Replacer: </label>
+        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={(e) => {
+          try { 
+            const newReplacer = JSON.parse(e.target.value);
+            this.setState({replacer: newReplacer});
+          }
+          catch(e){
+            this.setState({replacer: {}});
+          }
+        }} />
         {false && (
           <div>
             <p>Volume</p>
