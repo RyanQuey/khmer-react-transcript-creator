@@ -184,7 +184,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.6</h1>
+        <h1>Speech Recognition v2.0.7</h1>
         <select
           onChange={(e) => {
             this.props.recognition.lang = e.target.value;
