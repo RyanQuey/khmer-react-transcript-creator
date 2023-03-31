@@ -7,7 +7,7 @@ import {
 } from "../Util/timecode-converter/index";
 import "./style.css";
 
-import { Editor, EditorState, SelectionState, Modifier } from "draft-js";
+import { Editor, EditorState, SelectionState, Modifier, ContentState } from "draft-js";
 import { combineKeywords } from "./helpers/combine-keywords";
 import { split } from "split-khmer";
 import Helpers from "./helpers/khmer-helpers";
@@ -51,6 +51,7 @@ class GenerateTranscript extends Component {
     this.reset = this.reset.bind(this);
     this.copy = this.copy.bind(this);
     this.undo = this.undo.bind(this);
+    this.resplit = this.resplit.bind(this);
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
@@ -167,6 +168,18 @@ class GenerateTranscript extends Component {
       words: this.state.oldWords,
     });
   }
+  resplit(e) {
+    var text = this.state.editorState.getCurrentContent().getPlainText();
+    text = text.replace(Helpers.ZERO_WIDTH_SPACE, '');
+    const splitWords = split(text);
+    var textToAdd = splitWords.join(Helpers.ZERO_WIDTH_SPACE);
+    const newEditorState = EditorState.createWithContent(ContentState.createFromText(textToAdd));
+    this.setState({
+        editorState: newEditorState,
+        oldEditorState: this.state.editorState,
+    });
+  }
+
   render() {
     const {
       transcript,
@@ -184,7 +197,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.7</h1>
+        <h1>Speech Recognition v2.0.8</h1>
         <select
           onChange={(e) => {
             this.props.recognition.lang = e.target.value;
@@ -284,10 +297,14 @@ class GenerateTranscript extends Component {
         <button onClick={this.copy} onMouseDown={(e) => e.preventDefault()}>
           Copy
         </button>
+        <button onClick={this.resplit} onMouseDown={(e) => e.preventDefault()}>
+          Resplit
+        </button>
+
         <label>
           Should add space?:
           <input
-            name="isGoing"
+            name="shouldAddSpace"
             type="checkbox"
             checked={this.state.shouldAddSpace}
             onChange={(e) => {
