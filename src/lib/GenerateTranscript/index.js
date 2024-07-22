@@ -127,6 +127,7 @@ class GenerateTranscript extends Component {
     this.copy = this.copy.bind(this);
     this.undo = this.undo.bind(this);
     this.resplit = this.resplit.bind(this);
+    this.changeReplacerHook = this.changeReplacerHook.bind(this);
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
@@ -243,6 +244,20 @@ class GenerateTranscript extends Component {
       words: this.state.oldWords,
     });
   }
+
+  changeReplacerHook(e) {
+    try { 
+      const newReplacer = JSON.parse(e.target.value);
+      this.setState({replacer: newReplacer});
+      console.log("set to", newReplacer)
+
+    } catch(err){
+      console.error(err)
+      console.log("temporarily using no replacer at all...(but not changing the text in the editor")
+      this.setState({replacer: {}});
+    }
+  }
+
   resplit(e) {
     var text = this.state.editorState.getCurrentContent().getPlainText();
     text = text.replace(Helpers.ZERO_WIDTH_SPACE, '');
@@ -272,7 +287,7 @@ class GenerateTranscript extends Component {
 
     return (
       <div>
-        <h1>Speech Recognition v2.0.8</h1>
+        <h1>Speech Recognition v2.0.9</h1>
         <select
           onChange={(e) => {
             this.props.recognition.lang = e.target.value;
@@ -342,15 +357,7 @@ class GenerateTranscript extends Component {
         )}
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
         <label>Replacer: </label>
-        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={(e) => {
-          try { 
-            const newReplacer = JSON.parse(e.target.value);
-            this.setState({replacer: newReplacer});
-          }
-          catch(e){
-            this.setState({replacer: {}});
-          }
-        }} />
+        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={this.changeReplacerHook} />
         {false && (
           <div>
             <p>Volume</p>
