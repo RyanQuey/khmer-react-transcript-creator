@@ -136,7 +136,6 @@ class GenerateTranscript extends Component {
     this.undo = this.undo.bind(this);
     this.resplit = this.resplit.bind(this);
     this.changeReplacerHook = this.changeReplacerHook.bind(this);
-    this.revertReplacer = this.revertReplacer.bind(this);
     this.setReplacerLocalStorage = this.setReplacerLocalStorage.bind(this);
     this.getReplacerFromLocalStorage = this.getReplacerFromLocalStorage.bind(this);
 
@@ -283,12 +282,6 @@ class GenerateTranscript extends Component {
     this.changeReplacerHook(null, retrievedReplacer)
   }
 
-  revertReplacer(e) {
-    e && e.preventDefault()
-
-    this.changeReplacerHook(e, this.state.backupReplacerTextareaValue)
-  }
-
   setReplacerLocalStorage(e, index) {
     e && e.preventDefault()
 
@@ -431,9 +424,6 @@ class GenerateTranscript extends Component {
             onChange={this.changeReplacerHook} 
             value={this.state.replacerTextareaValue}
           />
-          <button onClick={this.revertReplacer}>
-            Revert
-          </button>
         </div>
 
         <div>
