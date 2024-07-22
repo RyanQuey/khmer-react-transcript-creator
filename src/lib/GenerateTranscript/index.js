@@ -123,8 +123,6 @@ class GenerateTranscript extends Component {
       replacer: {},
       // the string that sits in the field
       replacerTextareaValue: "",
-      // a backup, that is changed whenever save/retrieve happens
-      backupReplacerTextareaValue: "",
       shouldAddSpace: false,
     };
 
@@ -288,7 +286,6 @@ class GenerateTranscript extends Component {
     try { 
       const newReplacer = this.state.replacerTextareaValue
       console.log("saving to local storage: ",newReplacer)
-      this.setState("backupReplacerTextareaValue", newReplacer)
       localStorage.setItem(`khmer-replacer-json-${index}`, newReplacer)
 
     } catch(err){
