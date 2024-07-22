@@ -9,10 +9,6 @@ A React component to make speech recognition for Khmer audio and video easier an
 
 Node version is set in node version manager [`.nvmrc`](https://github.com/creationix/nvm#nvmrc)
 
-<!-- _Coding style convention ref optional, eg which linter to use_ -->
-
-<!-- _Linting, github pre-push hook - optional_ -->
-
 
 ## Setup
 ```
@@ -22,6 +18,31 @@ npm start
 ```
 
 Visit [http://localhost:3000](http://localhost:3000)
+
+
+## Use custom replacer:
+Use JSON string, with each key as something to be replaced, and value as what to replace it with. 
+
+E.g., 
+
+```
+{ "សួរ": "លា", "បូរ៉ា": "Ryan" }
+```
+
+(all "សួរ" becomes "លា"). 
+
+Then keep transcribing!
+
+### Copy from spreadsheet
+- In Spreadsheet, use one column per entry (first row of column, what to replace; second row of column, what to put in)
+- Use an Excel to JSON converter, e.g.:
+    * https://tableconvert.com/excel-to-json (also includes "transposing" if you used one row per entry)
+    * https://codepen.io/mmabale/full/YWwRjm
+
+- Copy that into the app and go!
+### Save your progress
+- Save to up to two local storage spots, and retrieve for the future.
+- Automatic saving of last value of field using a third local-storage key, which gets retrieved on reload. 
 
 
 ## Acknowledgements
