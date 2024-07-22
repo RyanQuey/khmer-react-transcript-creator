@@ -26,7 +26,7 @@ Use JSON string, with each key as something to be replaced, and value as what to
 E.g., 
 
 ```
-{ "សួរ": "លា", "បូរ៉ា": "Ryan" }
+{ "សួរ": "លា", "បូរ៉ា": "Ryan" yan"}
 ```
 
 (all "សួរ" becomes "លា"). 
@@ -34,6 +34,9 @@ E.g.,
 Then keep transcribing!
 
 ### Copy from spreadsheet
+If you want to keep your settings in a spreadsheet, you can do that then just copy it into the
+
+
 - In Spreadsheet, use one column per entry (first row of column, what to replace; second row of column, what to put in)
 - Use an Excel to JSON converter, e.g.:
     * https://tableconvert.com/excel-to-json (also includes "transposing" if you used one row per entry)
