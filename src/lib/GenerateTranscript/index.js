@@ -106,6 +106,8 @@ const languages = [
   ["CY", "Welsh"], 
   ["XH", "Xhosa"], 
 ]
+  
+const tmpLocalStorageKey = "khmer-replacer-json-LATEST"
 
 class GenerateTranscript extends Component {
   constructor(props) {
@@ -117,9 +119,15 @@ class GenerateTranscript extends Component {
       editorState: EditorState.moveFocusToEnd(editorState),
       oldWords: [],
       oldEditorState: null,
+      // the parsed json obj to use in replacing
       replacer: {},
+      // the string that sits in the field
+      replacerTextareaValue: "",
+      // a backup, that is changed whenever save/retrieve happens
+      backupReplacerTextareaValue: "",
       shouldAddSpace: false,
     };
+
     this.onChange = (editorState) => this.setState({ editorState });
     this.pause = this.pause.bind(this);
     this.start = this.start.bind(this);
@@ -128,11 +136,21 @@ class GenerateTranscript extends Component {
     this.undo = this.undo.bind(this);
     this.resplit = this.resplit.bind(this);
     this.changeReplacerHook = this.changeReplacerHook.bind(this);
+    this.revertReplacer = this.revertReplacer.bind(this);
+    this.setReplacerLocalStorage = this.setReplacerLocalStorage.bind(this);
+    this.getReplacerFromLocalStorage = this.getReplacerFromLocalStorage.bind(this);
+
 
     // props.recognition.onresult
     // set default language to Khmer TODO add options?
     // https://www.science.co.il/language/Locale-codes.php for codes
     props.recognition.lang = "KM";
+  }
+
+  componentDidMount () {
+    // pull from temp storage
+    console.log("on mount hook")
+    this.getReplacerFromLocalStorage(null, "LATEST")
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -205,6 +223,8 @@ class GenerateTranscript extends Component {
 
 
   reset(e) {
+    e.preventDefault()
+
     this.props.stopListening();
     this.props.resetTranscript();
     const editorState = EditorState.createEmpty();
@@ -218,14 +238,17 @@ class GenerateTranscript extends Component {
   }
 
   start(e) {
+    e.preventDefault()
     this.props.startListening();
   }
 
   pause(e) {
+    e.preventDefault()
     this.props.stopListening();
   }
 
   copy(e) {
+    e.preventDefault()
     const text = this.state.editorState.getCurrentContent().getPlainText();
     var input = document.createElement("input");
     input.setAttribute("value", text);
@@ -245,9 +268,52 @@ class GenerateTranscript extends Component {
     });
   }
 
-  changeReplacerHook(e) {
+  /**
+   *
+   * pass in "LATEST" in order to get last auto-saved text
+   */ 
+  getReplacerFromLocalStorage(e, index) {
+    e && e.preventDefault()
+
+    const localStorageKey = `khmer-replacer-json-${index}`
+    console.log("retrieving from: ", localStorageKey)
+    const retrievedReplacer = localStorage.getItem(localStorageKey)
+    console.log("retrieved: ",retrievedReplacer)
+
+    this.changeReplacerHook(null, retrievedReplacer)
+  }
+
+  revertReplacer(e) {
+    e && e.preventDefault()
+
+    this.changeReplacerHook(e, this.state.backupReplacerTextareaValue)
+  }
+
+  setReplacerLocalStorage(e, index) {
+    e && e.preventDefault()
+
     try { 
-      const newReplacer = JSON.parse(e.target.value);
+      const newReplacer = this.state.replacerTextareaValue
+      console.log("saving to local storage: ",newReplacer)
+      this.setState("backupReplacerTextareaValue", newReplacer)
+      localStorage.setItem(`khmer-replacer-json-${index}`, newReplacer)
+
+    } catch(err){
+      console.error(err)
+    }
+  }
+
+  changeReplacerHook(e, value) {
+    e && e.preventDefault()
+    const replacerValue = value || e && e.target.value
+    // NOTE make sure this is a string as we pass it in
+    console.log("set tmp local storage!")
+    localStorage.setItem(tmpLocalStorageKey, replacerValue)
+    this.setState({replacerTextareaValue: replacerValue || ""});
+
+    try { 
+
+      const newReplacer = JSON.parse(replacerValue);
       this.setState({replacer: newReplacer});
       console.log("set to", newReplacer)
 
@@ -302,23 +368,22 @@ class GenerateTranscript extends Component {
         <button
           disabled={!this.state.oldEditorState}
           onClick={this.undo}
-          onMouseDown={(e) => e.preventDefault()}
         >
           Undo
         </button>
-        <button onClick={this.reset} onMouseDown={(e) => e.preventDefault()}>
+        <button onClick={this.reset}>
           Reset
         </button>
-        <button onClick={this.start} onMouseDown={(e) => e.preventDefault()}>
+        <button onClick={this.start}>
           Start
         </button>
-        <button onClick={this.pause} onMouseDown={(e) => e.preventDefault()}>
+        <button onClick={this.pause}>
           Pause
         </button>
-        <button onClick={this.copy} onMouseDown={(e) => e.preventDefault()}>
+        <button onClick={this.copy}>
           Copy
         </button>
-        <button onClick={this.resplit} onMouseDown={(e) => e.preventDefault()}>
+        <button onClick={this.resplit}>
           Resplit
         </button>
 
@@ -356,21 +421,33 @@ class GenerateTranscript extends Component {
           <div>&nbsp;</div>
         )}
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
-        <label>Replacer: </label>
-        <textarea style={{width: "400px"}} placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' onChange={this.changeReplacerHook} />
-        {false && (
-          <div>
-            <p>Volume</p>
-            <input
-              id="volume"
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value="0.5"
-            />
-          </div>
-        )}
+
+        <br />
+        <div>
+          <label>Replacer: </label>
+          <textarea 
+            style={{width: "400px"}} 
+            placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' 
+            onChange={this.changeReplacerHook} 
+            value={this.state.replacerTextareaValue}
+          />
+          <button onClick={this.revertReplacer}>
+            Revert
+          </button>
+        </div>
+
+        <div>
+          {[1,2].map(index => (
+            <div>
+              <button onClick={(e) => this.setReplacerLocalStorage(e, index)}>
+                Save to options #{index}
+              </button>
+              <button onClick={(e) => this.getReplacerFromLocalStorage(e, index)}>
+                Retrieve from options #{index}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
