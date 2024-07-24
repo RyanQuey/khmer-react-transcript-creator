@@ -478,6 +478,7 @@ class GenerateTranscript extends Component {
           <a 
             href="https://tableconvert.com/excel-to-json"
             target="_blank"
+            rel="noopener noreferrer"
           >
             Copy from Excel
           </a>
