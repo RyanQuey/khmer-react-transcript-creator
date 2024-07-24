@@ -312,12 +312,17 @@ class GenerateTranscript extends Component {
         replacerTextareaValue: replacerValue || ""
       });
 
-      const newReplacer = JSON.parse(replacerValue);
+      if (replacerValue) {
+        const newReplacer = JSON.parse(replacerValue);
+        this.setState({
+          replacer: newReplacer,
+        });
+        console.log("set to", newReplacer)
+      }
+
       this.setState({
-        replacer: newReplacer,
         errorInReplacerJSON: false,
       });
-      console.log("set to", newReplacer)
 
     } catch(err){
       console.error(err)
@@ -470,6 +475,12 @@ class GenerateTranscript extends Component {
         <br />
         <div className="replacer-container">
           <h3>Replacer</h3>
+          <a 
+            href="https://tableconvert.com/excel-to-json"
+            target="_blank"
+          >
+            Copy from Excel
+          </a>
           <div className="form-group space-between align-start">
             <div className="form-group align-end">
               <textarea 
@@ -481,7 +492,7 @@ class GenerateTranscript extends Component {
               />
               <div className="form-group vert space-between">
                 <div className={`replacer-error-warning ${this.state.errorInReplacerJSON ? "error" : ""}`}> 
-                  {this.state.errorInReplacerJSON && "Error in Replacer: Please Try again"}
+                  {this.state.replacerTextareaValue && this.state.errorInReplacerJSON && "Error in Replacer: Please Try again"}
                   {!this.state.errorInReplacerJSON && this.state.replacerTextareaValue && "Looks great!"}
                 </div>
                 <button onClick={this.prettyPrintJSON}>
