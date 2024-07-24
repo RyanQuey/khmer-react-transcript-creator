@@ -348,53 +348,58 @@ class GenerateTranscript extends Component {
     return (
       <div>
         <h1>Speech Recognition v2.0.9</h1>
-        <select
-          onChange={(e) => {
-            this.props.recognition.lang = e.target.value;
-          }}
-          defaultValue={this.props.recognition.lang}
-          data-placeholder="Choose a Language..."
-        >
-          {languages.map(lang => (
-            <option value={lang[0]}>{lang[1]}</option>
-          ))}
-        </select>
-        <button
-          disabled={!this.state.oldEditorState}
-          onClick={this.undo}
-        >
-          Undo
-        </button>
-        <button onClick={this.reset}>
-          Reset
-        </button>
-        <button onClick={this.start}>
-          Start
-        </button>
-        <button onClick={this.pause}>
-          Pause
-        </button>
-        <button onClick={this.copy}>
-          Copy
-        </button>
-        <button onClick={this.resplit}>
-          Resplit
-        </button>
-
-        <label>
-          Should add space?:
-          <input
-            name="shouldAddSpace"
-            type="checkbox"
-            checked={this.state.shouldAddSpace}
+        <div className="form-group">
+          <select
             onChange={(e) => {
-              this.setState({ shouldAddSpace: !this.state.shouldAddSpace });
+              this.props.recognition.lang = e.target.value;
             }}
-          />
-        </label>
+            defaultValue={this.props.recognition.lang}
+            data-placeholder="Choose a Language..."
+          >
+            {languages.map(lang => (
+              <option value={lang[0]}>{lang[1]}</option>
+            ))}
+          </select>
+
+          <label>
+            <input
+              name="shouldAddSpace"
+              type="checkbox"
+              checked={this.state.shouldAddSpace}
+              onChange={(e) => {
+                this.setState({ shouldAddSpace: !this.state.shouldAddSpace });
+              }}
+            />
+            &nbsp;
+            Add space?
+          </label>
+        </div>
+
+        <div className="button-group">
+          <button
+            disabled={!this.state.oldEditorState}
+            onClick={this.undo}
+          >
+            Undo
+          </button>
+          <button onClick={this.reset}>
+            Reset
+          </button>
+          <button onClick={this.start}>
+            Start
+          </button>
+          <button onClick={this.pause}>
+            Pause
+          </button>
+          <button onClick={this.copy}>
+            Copy
+          </button>
+          <button onClick={this.resplit}>
+            Resplit
+          </button>
+        </div>
 
         {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
-        <br />
         <div className="transcript-container">
           In progress:{" "}
           {this.props.finalTranscript !== this.props.transcript
@@ -417,7 +422,7 @@ class GenerateTranscript extends Component {
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
 
         <br />
-        <div>
+        <div className="form-group">
           <label>Replacer: </label>
           <textarea 
             style={{width: "400px"}} 
@@ -427,9 +432,9 @@ class GenerateTranscript extends Component {
           />
         </div>
 
-        <div>
+        <div className="form-group">
           {[1,2].map(index => (
-            <div>
+            <div className="button-group vert">
               <button onClick={(e) => this.setReplacerLocalStorage(e, index)}>
                 Save to options #{index}
               </button>

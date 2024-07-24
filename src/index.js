@@ -150,7 +150,7 @@ class App extends React.Component {
     return (
       <div className={style.container}>
         <span className={style.title}>
-          Demo page for <mark>Khmer Transcript Creator</mark> - Component
+          <h5>Khmer Transcript Creator&nbsp;
           |&nbsp;
           <a
             href="https://github.com/RyanQuey/khmer-react-transcript-creator"
@@ -159,6 +159,7 @@ class App extends React.Component {
           >
             Github Repo
           </a>
+          </h5>
         </span>
         <GenerateTranscript />
       </div>
