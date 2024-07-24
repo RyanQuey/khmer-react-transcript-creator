@@ -150,7 +150,7 @@ class App extends React.Component {
     return (
       <div className={style.container}>
         <span className={style.title}>
-          <h5>Khmer Transcript Creator&nbsp;
+          <h5>Khmer Transcript Creator v2.0.9&nbsp;
           |&nbsp;
           <a
             href="https://github.com/RyanQuey/khmer-react-transcript-creator"
