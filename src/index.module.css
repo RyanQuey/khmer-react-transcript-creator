@@ -2,6 +2,7 @@
 
 .container {
   height: 100vh;
-  font-family: Khmer Mondulkiri;
+  font-family: Lato, Khmer Mondulkiri;
+  padding: 0rem 1rem;
   /* box-sizing: border-box; TODO */
 }

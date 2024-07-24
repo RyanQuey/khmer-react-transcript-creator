@@ -124,6 +124,7 @@ class GenerateTranscript extends Component {
       // the string that sits in the field
       replacerTextareaValue: "",
       shouldAddSpace: false,
+      errorInReplacerJSON: false,
     };
 
     this.onChange = (editorState) => this.setState({ editorState });
@@ -136,6 +137,7 @@ class GenerateTranscript extends Component {
     this.changeReplacerHook = this.changeReplacerHook.bind(this);
     this.setReplacerLocalStorage = this.setReplacerLocalStorage.bind(this);
     this.getReplacerFromLocalStorage = this.getReplacerFromLocalStorage.bind(this);
+    this.prettyPrintJSON = this.prettyPrintJSON.bind(this)
 
 
     // props.recognition.onresult
@@ -303,18 +305,27 @@ class GenerateTranscript extends Component {
     // NOTE make sure this is a string as we pass it in
     console.log("set tmp local storage!")
     localStorage.setItem(tmpLocalStorageKey, replacerValue)
-    this.setState({replacerTextareaValue: replacerValue || ""});
 
     try { 
 
+      this.setState({
+        replacerTextareaValue: replacerValue || ""
+      });
+
       const newReplacer = JSON.parse(replacerValue);
-      this.setState({replacer: newReplacer});
+      this.setState({
+        replacer: newReplacer,
+        errorInReplacerJSON: false,
+      });
       console.log("set to", newReplacer)
 
     } catch(err){
       console.error(err)
       console.log("temporarily using no replacer at all...(but not changing the text in the editor")
-      this.setState({replacer: {}});
+      this.setState({
+        replacer: {},
+        errorInReplacerJSON: true,
+      });
     }
   }
 
@@ -329,6 +340,33 @@ class GenerateTranscript extends Component {
         oldEditorState: this.state.editorState,
     });
   }
+
+  /**
+   * takes JSON String and converts to something pretty
+   *
+   *  - https://stackoverflow.com/questions/26320525/prettify-json-data-in-textarea-input
+   */ 
+  prettyPrintJSON (e) {
+    e && e.preventDefault()
+    const originalValue = this.state.replacerTextareaValue
+
+    try {
+      const parsed = JSON.parse(originalValue);
+      const pretty = JSON.stringify(parsed, undefined, 4);
+
+      this.setState({
+        replacerTextareaValue: pretty,
+      })
+
+    } catch (err) {
+      this.setState({
+        replacer: {},
+        errorInReplacerJSON: true,
+      });
+
+    }
+  }
+
 
   render() {
     const {
@@ -346,8 +384,8 @@ class GenerateTranscript extends Component {
     //TODO add back in once we switch over to using my fork  which passes down all results as an array rather than compiling all into a string
 
     return (
-      <div>
-        <div className="form-group space-between">
+      <div className="generate-transcript-container">
+        <div className="form-group space-between top-menu">
           <div className="button-group">
             <button
               disabled={!this.state.oldEditorState}
@@ -403,15 +441,21 @@ class GenerateTranscript extends Component {
 
         {/* <button disabled={!this.props.finalTranscript || this.props.finalTranscript !== this.props.transcript} onClick={this.stop} onMouseDown={e => e.preventDefault()}>Insert</button> */}
         <div className="transcript-container">
-          In progress:{" "}
-          {this.props.finalTranscript !== this.props.transcript
-            ? this.props.interimTranscript
-            : ""}{" "}
-          ...
-          <br />
-          {this.state.error && (
-            <span style={{ color: "red" }}>{this.state.error}</span>
-          )}
+          <div className="interim-transcript-container">
+            <span>
+              Words in progress:&nbsp;
+            </span>
+            <span>
+              {this.props.finalTranscript !== this.props.transcript ? this.props.interimTranscript : ""}
+            </span>
+            &nbsp;...
+          </div>
+          <div className="recording-status-container">
+            <br />
+            {this.state.error && (
+              <span style={{ color: "red" }}>{this.state.error}</span>
+            )}
+          </div>
         </div>
         {listening ? (
           <span>
@@ -424,27 +468,39 @@ class GenerateTranscript extends Component {
         <Editor editorState={this.state.editorState} onChange={this.onChange} />
 
         <br />
-        <div className="form-group">
-          <label>Replacer: </label>
-          <textarea 
-            style={{width: "400px"}} 
-            placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' 
-            onChange={this.changeReplacerHook} 
-            value={this.state.replacerTextareaValue}
-          />
-        </div>
-
-        <div className="form-group">
-          {[1,2].map(index => (
-            <div className="button-group vert">
-              <button onClick={(e) => this.setReplacerLocalStorage(e, index)}>
-                Save (Slot #{index})
-              </button>
-              <button onClick={(e) => this.getReplacerFromLocalStorage(e, index)}>
-                Retrieve (Slot #{index})
-              </button>
+        <div className="replacer-container">
+          <h3>Replacer</h3>
+          <div className="form-group space-between align-start">
+            <div className="form-group align-end">
+              <textarea 
+                style={{width: "400px"}} 
+                placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' 
+                onChange={this.changeReplacerHook} 
+                value={this.state.replacerTextareaValue}
+              />
+              <div className="form-group vert space-between">
+                <div className="replacer-error-warning"> 
+                  {this.state.errorInReplacerJSON && "Error in Replacer: Please Try again"}
+                </div>
+                <button onClick={this.prettyPrintJSON}>
+                  Pretty Print 
+                </button>
+              </div>
             </div>
-          ))}
+
+            <div className="form-group">
+              {[1,2].map(index => (
+                <div className="button-group vert">
+                  <button onClick={(e) => this.setReplacerLocalStorage(e, index)}>
+                    Save (Slot #{index})
+                  </button>
+                  <button onClick={(e) => this.getReplacerFromLocalStorage(e, index)}>
+                    Retrieve (Slot #{index})
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );

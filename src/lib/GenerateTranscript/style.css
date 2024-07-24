@@ -1,17 +1,36 @@
+.generate-transcript-container {
+    padding: 0rem 2rem 2rem 2rem;
+    margin-bottom: 2rem;
+}
 .DraftEditor-root {
     border: 1px solid #000;
-    padding: 5px;
-    margin-top: 20px;
+    padding: 1rem;
+    margin: 20px;
     height: 200px;
     overflow-y: auto;
+}
+.top-menu {
+    border-bottom: 1px solid #000;
+    margin-bottom: 1rem;
+}
+.transcript-container {
+}
+.interim-transcript-container {
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
 }
 button {
     margin: 5px;
     padding: 5px;
+    font-family: Lato;
 }
 label {
     padding: 5px;
 } 
+textarea {
+    padding: 1rem;
+}
 .button-group {
     display: flex;
     margin: 1rem;
@@ -28,8 +47,35 @@ label {
 .form-group {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+.form-group.vert {
+    flex-direction: column;
+}
+.form-group.align-start {
+    align-items: flex-start;
+}
+.form-group.align-end{
+    align-items: flex-end;
 }
 .form-group select {
     height: fit-content;
     padding: 5px;
+}
+
+.replacer-container {
+}
+.replacer-container textarea {
+    min-height: 200px;
+    min-width: 200px;
+    width: 100%;
+    margin: 0 1rem;
+}
+.replacer-error-warning {
+    min-height: 1.5rem;
+    width: 5rem;
+    height: 185px;
+    color: red;
+    text-align: center;
 }
