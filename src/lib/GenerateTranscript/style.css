@@ -72,10 +72,18 @@ textarea {
     width: 100%;
     margin: 0 1rem;
 }
+.replacer-container textarea.error{
+    color: red;
+    /* dark red */
+    /* color: #8B0000; */
+}
 .replacer-error-warning {
     min-height: 1.5rem;
     width: 5rem;
     height: 185px;
-    color: red;
+    color: green;
     text-align: center;
+}
+.replacer-error-warning.error {
+    color: red;
 }

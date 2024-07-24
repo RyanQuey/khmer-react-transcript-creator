@@ -477,10 +477,12 @@ class GenerateTranscript extends Component {
                 placeholder='Ex. {"target": "modifier", "target2": "modifier2"}' 
                 onChange={this.changeReplacerHook} 
                 value={this.state.replacerTextareaValue}
+                className={this.state.errorInReplacerJSON ? "error" : ""}
               />
               <div className="form-group vert space-between">
-                <div className="replacer-error-warning"> 
+                <div className={`replacer-error-warning ${this.state.errorInReplacerJSON ? "error" : ""}`}> 
                   {this.state.errorInReplacerJSON && "Error in Replacer: Please Try again"}
+                  {!this.state.errorInReplacerJSON && this.state.replacerTextareaValue && "Looks great!"}
                 </div>
                 <button onClick={this.prettyPrintJSON}>
                   Pretty Print 
