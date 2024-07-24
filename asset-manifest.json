@@ -1,7 +1,7 @@
 {
   "main.css": "./static/css/main.9437056d.chunk.css",
-  "main.js": "./static/js/main.1d69a962.chunk.js",
-  "main.js.map": "./static/js/main.1d69a962.chunk.js.map",
+  "main.js": "./static/js/main.c5927da0.chunk.js",
+  "main.js.map": "./static/js/main.c5927da0.chunk.js.map",
   "static/js/1.d0408911.chunk.js": "./static/js/1.d0408911.chunk.js",
   "static/js/1.d0408911.chunk.js.map": "./static/js/1.d0408911.chunk.js.map",
   "runtime~main.js": "./static/js/runtime~main.4a686d48.js",
@@ -9,6 +9,6 @@
   "static/media/index.module.css": "./static/media/Khmer Mondulkiri Regular.16981de9.ttf",
   "static/css/main.9437056d.chunk.css.map": "./static/css/main.9437056d.chunk.css.map",
   "index.html": "./index.html",
-  "precache-manifest.83188b78980b0540fd1fae4f094e80c3.js": "./precache-manifest.83188b78980b0540fd1fae4f094e80c3.js",
+  "precache-manifest.7a7c407e35e392550686a79674f8a63c.js": "./precache-manifest.7a7c407e35e392550686a79674f8a63c.js",
   "service-worker.js": "./service-worker.js"
 }
