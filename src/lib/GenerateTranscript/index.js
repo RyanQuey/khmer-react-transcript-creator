@@ -277,7 +277,11 @@ class GenerateTranscript extends Component {
     const retrievedReplacer = localStorage.getItem(localStorageKey)
     console.log("retrieved: ",retrievedReplacer)
 
-    this.changeReplacerHook(null, retrievedReplacer)
+    if (retrievedReplacer) {
+      this.changeReplacerHook(null, retrievedReplacer)
+    } else {
+      console.log("not setting from localStorage, since nothing was found")
+    }
   }
 
   setReplacerLocalStorage(e, index) {
